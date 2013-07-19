@@ -19,5 +19,13 @@ describe Seam::Flow do
     it "should return one step" do
       flow.steps.count.must_equal 1
     end
+
+    it "should return a DoStep" do
+      flow.steps.first.is_a?(Seam::DoStep).must_equal true
+    end
+
+    it "should contain the name of the step" do
+      flow.steps.first.name.must_equal "do_something"
+    end
   end
 end

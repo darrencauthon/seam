@@ -1,4 +1,8 @@
 module Seam
+  class DoStep
+    attr_accessor :name
+  end
+
   class Flow
     attr_reader :steps
 
@@ -7,7 +11,9 @@ module Seam
     end
 
     def method_missing(meth, *args, &blk)
-      @steps << Object.new
+      step = DoStep.new
+      step.name = "do_something"
+      @steps << step
     end
   end
 end
