@@ -1,8 +1,4 @@
 module Seam
-  class DoStep
-    attr_accessor :name
-  end
-
   class Flow
     attr_reader :steps
 
