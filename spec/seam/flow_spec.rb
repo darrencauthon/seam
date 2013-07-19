@@ -9,23 +9,28 @@ describe Seam::Flow do
     end
   end
 
-  describe "one action setup" do
-    let(:flow) do
-                 flow = Seam::Flow.new
-                 flow.do_something
-                 flow
-               end
+  [:name].to_objects {[
+    ['do_something'],
+    ['something_else']
+  ]}.each do |test|
+    describe "one action setup" do
+      let(:flow) do
+                   flow = Seam::Flow.new
+                   flow.send(test.name)
+                   flow
+                 end
 
-    it "should return one step" do
-      flow.steps.count.must_equal 1
-    end
+      it "should return one step" do
+        flow.steps.count.must_equal 1
+      end
 
-    it "should return a DoStep" do
-      flow.steps.first.is_a?(Seam::DoStep).must_equal true
-    end
+      it "should return a DoStep" do
+        flow.steps.first.is_a?(Seam::DoStep).must_equal true
+      end
 
-    it "should contain the name of the step" do
-      flow.steps.first.name.must_equal "do_something"
+      it "should contain the name of the step" do
+        flow.steps.first.name.must_equal test.name
+      end
     end
   end
 end

@@ -12,7 +12,7 @@ module Seam
 
     def method_missing(meth, *args, &blk)
       step = DoStep.new
-      step.name = "do_something"
+      step.name = meth.to_s
       @steps << step
     end
   end
