@@ -7,6 +7,10 @@ describe Seam::Flow do
     it "should have an empty set of steps" do
       flow.steps.count.must_equal 0
     end
+
+    it "should return a json block" do
+      flow.serialize.must_equal '{"name":""}'
+    end
   end
 
   [:name].to_objects {[
