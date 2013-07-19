@@ -1,5 +1,4 @@
-require "seam/version"
+Dir[File.dirname(__FILE__) + '/seam/*.rb'].each {|file| require file }
 
 module Seam
-  # Your code goes here...
 end
