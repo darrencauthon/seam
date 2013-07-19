@@ -8,8 +8,11 @@ describe Seam::Flow do
       flow.steps.count.must_equal 0
     end
 
-    it "should return a json block" do
-      flow.serialize.must_equal '{"name":""}'
+    it "should provide the mechanism for serializing itself" do
+      string = flow.serialize
+      new_flow = Seam::Flow.deserialize string
+      new_flow.class.must_equal Seam::Flow
+      new_flow.seams.count.must_equal 1
     end
   end
 

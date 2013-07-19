@@ -15,7 +15,11 @@ module Seam
     end
 
     def serialize
-      JSON.generate( { name: '' } )
+      JSON.generate( { name: '', steps: [] } )
+    end
+
+    def self.deserialize input
+      Seam::Flow.new
     end
   end
 end
