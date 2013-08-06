@@ -36,7 +36,11 @@ module Seam
     end
 
     def save
-      Seam::Effort.session['efforts'].insert(self.to_hash)
+      existing_record = Seam::Effort.find self.id
+      if existing_record
+      else
+        Seam::Effort.session['efforts'].insert(self.to_hash)
+      end
     end
 
     def to_hash

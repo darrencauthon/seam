@@ -9,7 +9,7 @@ module Seam
       @steps << [meth.to_s, args]
     end
 
-    def start data
+    def start(data = {})
       effort = Seam::Effort.new
       effort.id = SecureRandom.uuid.to_s
       effort.created_at = Time.now
