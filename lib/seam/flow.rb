@@ -9,6 +9,10 @@ module Seam
       @steps << [meth.to_s, args]
     end
 
+    def start data
+      Seam::Effort.new
+    end
+
     def steps
       @steps.map do |x|
         step = Seam::Step.new

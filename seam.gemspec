@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "subtle"
   spec.add_development_dependency "contrast"
+  spec.add_development_dependency "mocha"
 end
