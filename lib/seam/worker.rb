@@ -20,6 +20,7 @@ module Seam
     end
 
     def move_to_next_step
+      @current_run[:result] = "move_to_next_step"
       @current_effort.completed_steps << @current_effort.next_step
 
       steps = @current_effort.flow['steps'].map { |x| x['name'] }
@@ -30,7 +31,12 @@ module Seam
     end
 
     def try_again_in seconds
-      @current_effort.next_execute_at = Time.now + seconds
+      try_again_on = Time.now + seconds
+
+      @current_run[:result] = "try_again_in"
+      @current_run[:try_again_on] = try_again_on
+
+      @current_effort.next_execute_at = try_again_on
       @current_effort.save
     end
   end
