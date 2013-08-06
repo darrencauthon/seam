@@ -23,7 +23,8 @@ module Seam
       end
 
       def find_all_by_step step
-        @session['efforts'].find( { next_step: step, next_execute_at: { '$lte' => Time.now } } )
+        @session['efforts']
+          .find( { next_step: step, next_execute_at: { '$lte' => Time.now } } )
           .map { |x| Seam::Effort.parse x }
       end
 
