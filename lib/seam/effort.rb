@@ -7,6 +7,7 @@ module Seam
     attr_accessor :next_step
     attr_accessor :flow
     attr_accessor :data
+    attr_accessor :history
 
     class << self
 
@@ -36,6 +37,7 @@ module Seam
         effort.next_step       = document['next_step']
         effort.flow            = document['flow']
         effort.data            = document['data']
+        effort.history         = document['history']
         effort.completed_steps = document['completed_steps']
         effort
       end
@@ -44,6 +46,7 @@ module Seam
     
     def initialize
       @completed_steps = []
+      @history         = []
     end
 
     def save
@@ -64,7 +67,8 @@ module Seam
         next_execute_at: self.next_execute_at,
         next_step:       self.next_step,
         flow:            self.flow,
-        data:            self.data
+        data:            self.data,
+        history:         self.history,
       }
     end
   end

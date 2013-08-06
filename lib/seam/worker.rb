@@ -5,8 +5,12 @@ module Seam
     end
 
     def execute effort
+      @current_run = { started_at: Time.now, step: @step.to_s }
       @current_effort = effort
       process
+      @current_run[:stopped_at] = Time.now
+      @current_effort.history << @current_run
+      @current_effort.save
     end
 
     def execute_all

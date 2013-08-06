@@ -388,4 +388,146 @@ describe "worker" do
       effort.data['hit 1'].must_equal 2
     end
   end
+
+  describe "tracking history" do
+
+    let(:flow) do
+      flow = Seam::Flow.new
+      flow.wait_for_attempting_contact_stage
+      flow.determine_if_postcard_should_be_sent
+      flow.send_postcard_if_necessary
+      flow
+    end
+
+    let(:effort_creator) do
+      ->() do
+        e = flow.start
+        Seam::Effort.find(e.id)
+      end
+    end
+    
+    let(:wait_for_attempting_contact_stage_worker) do
+      worker = Seam::Worker.new
+      worker.for(:wait_for_attempting_contact_stage)
+
+      def worker.process
+        @current_effort.data['hit 1'] ||= 0
+        @current_effort.data['hit 1'] += 1
+        if Time.now >= Time.parse('28/12/2013')
+          move_to_next_step
+        else
+          try_again_in 1.day
+        end
+      end
+
+      worker
+    end
+
+    let(:determine_if_postcard_should_be_sent_worker) do
+      worker = Seam::Worker.new
+      worker.for(:determine_if_postcard_should_be_sent)
+
+      def worker.process
+        @current_effort.data['hit 2'] ||= 0
+        @current_effort.data['hit 2'] += 1
+        move_to_next_step
+      end
+
+      worker
+    end
+
+    let(:send_postcard_if_necessary_worker) do
+      worker = Seam::Worker.new
+      worker.for(:send_postcard_if_necessary)
+
+      def worker.process
+        @current_effort.data['hit 3'] ||= 0
+        @current_effort.data['hit 3'] += 1
+        move_to_next_step
+      end
+
+      worker
+    end
+
+    before do
+      Timecop.freeze Time.parse('26/12/2013')
+    end
+
+    it "should progress through the story" do
+
+      # SETUP
+      effort = effort_creator.call
+      effort.next_step.must_equal "wait_for_attempting_contact_stage"
+
+      # FIRST WAVE
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal "wait_for_attempting_contact_stage"
+
+      effort.history.count.must_equal 1
+      effort.history[0].contrast_with!({"started_at"=> Time.now, "step"=>"wait_for_attempting_contact_stage", "stopped_at" => Time.now } )
+
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal "wait_for_attempting_contact_stage"
+
+      effort.history.count.must_equal 1
+
+      # THE NEXT DAY
+      Timecop.freeze Time.parse('27/12/2013')
+
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal "wait_for_attempting_contact_stage"
+
+      effort.history.count.must_equal 2
+      effort.history[1].contrast_with!({"started_at"=> Time.now, "step"=>"wait_for_attempting_contact_stage", "stopped_at" => Time.now } )
+
+      # THE NEXT DAY
+      Timecop.freeze Time.parse('28/12/2013')
+
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal "determine_if_postcard_should_be_sent"
+
+      effort.history.count.must_equal 3
+      effort.history[2].contrast_with!({"started_at"=> Time.now, "step"=>"wait_for_attempting_contact_stage", "stopped_at" => Time.now } )
+
+      # KEEP GOING
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal "send_postcard_if_necessary"
+
+      effort.history.count.must_equal 4
+      effort.history[3].contrast_with!({"started_at"=> Time.now, "step"=>"determine_if_postcard_should_be_sent", "stopped_at" => Time.now } )
+      
+      # KEEP GOING
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal nil
+
+      effort.history.count.must_equal 5
+      effort.history[4].contrast_with!({"started_at"=> Time.now, "step"=>"send_postcard_if_necessary", "stopped_at" => Time.now } )
+
+    end
+  end
 end
