@@ -6,6 +6,7 @@ module Seam
     attr_accessor :next_execute_at
     attr_accessor :next_step
     attr_accessor :flow
+    attr_accessor :data
 
     class << self
 
@@ -21,6 +22,11 @@ module Seam
         self.parse document
       end
 
+      def find_all_by_step step
+        @session['efforts'].find( { next_step: step } )
+          .map { |x| Seam::Effort.parse x }
+      end
+
       def parse document
         effort = Effort.new
         effort.id              = document['id']
@@ -28,6 +34,7 @@ module Seam
         effort.next_execute_at = document['next_execute_at']
         effort.next_step       = document['next_step']
         effort.flow            = document['flow']
+        effort.data            = document['data']
         effort
       end
 
@@ -54,7 +61,8 @@ module Seam
         completed_steps: self.completed_steps,
         next_execute_at: self.next_execute_at,
         next_step:       self.next_step,
-        flow:            self.flow
+        flow:            self.flow,
+        data:            self.data
       }
     end
   end
