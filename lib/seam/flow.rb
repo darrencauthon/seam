@@ -14,6 +14,7 @@ module Seam
         step = Seam::Step.new
         step.name = x[0]
         step.type = "do"
+        step.arguments = x[1]
         if step.name.index('branch_on')
           step.name += "_#{x[1][0]}"
           step.type = "branch"

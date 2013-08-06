@@ -34,5 +34,11 @@ describe "a useful example" do
       flow.steps[1].type.must_equal "do"
       flow.steps[2].type.must_equal "branch"
     end
+    
+    it "should set the arguments as well" do
+      flow.steps[0].arguments.must_equal [{ limit: 14.days.to_i }]
+      flow.steps[1].arguments.must_equal []
+      flow.steps[2].arguments.must_equal [:postcard_should_be_sent, { "yes" => :send_the_postcard } ]
+    end
   end
 end
