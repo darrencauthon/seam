@@ -12,8 +12,8 @@ module Seam
     def start(data = {})
       effort = Seam::Effort.new
       effort.id = SecureRandom.uuid.to_s
-      effort.created_at = Time.now
-      effort.next_execute_at = Time.now
+      effort.created_at = Time.parse(Time.now.to_s)
+      effort.next_execute_at = Time.parse(Time.now.to_s)
       effort.next_step = self.steps.first.name.to_s
       effort.save
       effort

@@ -23,7 +23,7 @@ module Seam
       def parse document
         effort = Effort.new
         effort.id              = document['id']
-        effort.created_at      = document['created_at']
+        effort.created_at      = Time.parse(document['created_at'].to_s)
         effort.next_execute_at = document['next_execute_at']
         effort.next_step       = document['next_step']
         effort
@@ -38,6 +38,8 @@ module Seam
     def save
       existing_record = Seam::Effort.find self.id
       if existing_record
+        Seam::Effort.session['efforts'].find( { id: self.id } )
+            .update("$set" => self.to_hash)
       else
         Seam::Effort.session['efforts'].insert(self.to_hash)
       end
