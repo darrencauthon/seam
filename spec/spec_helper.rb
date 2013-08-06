@@ -5,3 +5,10 @@ require 'minitest/pride'
 require 'subtle'
 require 'timecop'
 require 'mocha/setup'
+
+def test_moped_session
+  session = Moped::Session.new([ "127.0.0.1:27017" ])
+  session.use "seam_test"
+end
+
+Seam::Effort.set_session test_moped_session

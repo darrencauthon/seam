@@ -2,6 +2,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "a more useful example" do
 
+  before do
+    test_moped_session['efforts'].drop
+  end
+
   describe "starting an effort" do
     let(:flow) do
       flow = Seam::Flow.new
@@ -43,6 +47,11 @@ describe "a more useful example" do
 
     it "should stamp the next step name" do
       @effort.next_step.must_equal "do_something"
+    end
+
+    it "should save an effort in the db" do
+      effort = Seam::Effort.find @effort.id
+      effort.id.must_equal @effort.id
     end
   end
 end
