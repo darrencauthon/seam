@@ -10,7 +10,10 @@ module Seam
     end
 
     def start data
-      Seam::Effort.new
+      effort = Seam::Effort.new
+      effort.id = SecureRandom.uuid.to_s
+      effort.created_at = Time.now
+      effort
     end
 
     def steps
