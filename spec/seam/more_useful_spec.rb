@@ -36,5 +36,13 @@ describe "a more useful example" do
     it "should stamp the create date" do
       @effort.created_at.must_equal now
     end
+
+    it "should stamp the next execute date" do
+      @effort.next_execute_at.must_equal now
+    end
+
+    it "should stamp the next step name" do
+      @effort.next_step.must_equal "do_something"
+    end
   end
 end
