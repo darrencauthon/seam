@@ -31,13 +31,13 @@ describe Seam::Effort do
 
       first_effort.next_step = 'i_changed_the_first_one'
       first_effort.save
-      first_effort.to_hash.contrast_with! Seam::Effort.find(first_effort.id).to_hash
-      second_effort.to_hash.contrast_with! Seam::Effort.find(second_effort.id).to_hash
+      first_effort.to_hash.contrast_with! Seam::Effort.find(first_effort.id).to_hash, [:id, :created_at]
+      second_effort.to_hash.contrast_with! Seam::Effort.find(second_effort.id).to_hash, [:id, :created_at]
 
       second_effort.next_step = 'i_changed_the_second_one'
       second_effort.save
-      first_effort.to_hash.contrast_with! Seam::Effort.find(first_effort.id).to_hash
-      second_effort.to_hash.contrast_with! Seam::Effort.find(second_effort.id).to_hash
+      first_effort.to_hash.contrast_with! Seam::Effort.find(first_effort.id).to_hash, [:id, :created_at]
+      second_effort.to_hash.contrast_with! Seam::Effort.find(second_effort.id).to_hash, [:id, :created_at]
     end
   end
 end

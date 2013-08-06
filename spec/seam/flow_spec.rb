@@ -14,9 +14,7 @@ describe "flow" do
       f = Seam::Flow.new
       f.wait_for_attempting_contact_stage limit: 2.weeks
       f.determine_if_postcard_should_be_sent
-      f.branch_on(:postcard_should_be_sent, {
-                                              'yes' => :send_the_postcard,
-                                            })
+      f.send_postcard_if_necessary
       f
     end
 
@@ -32,19 +30,19 @@ describe "flow" do
       it "should set the name of the three steps" do
         flow.steps[0].name.must_equal "wait_for_attempting_contact_stage"
         flow.steps[1].name.must_equal "determine_if_postcard_should_be_sent"
-        flow.steps[2].name.must_equal "branch_on_postcard_should_be_sent"
+        flow.steps[2].name.must_equal "send_postcard_if_necessary"
       end
 
       it "should set the step types of the three steps" do
         flow.steps[0].type.must_equal "do"
         flow.steps[1].type.must_equal "do"
-        flow.steps[2].type.must_equal "branch"
+        flow.steps[2].type.must_equal "do"
       end
       
       it "should set the arguments as well" do
         flow.steps[0].arguments.must_equal [{ limit: 14.days.to_i }]
         flow.steps[1].arguments.must_equal []
-        flow.steps[2].arguments.must_equal [:postcard_should_be_sent, { "yes" => :send_the_postcard } ]
+        flow.steps[2].arguments.must_equal []
       end
     end
   end
@@ -92,7 +90,7 @@ describe "flow" do
 
       it "should save an effort in the db" do
         effort = Seam::Effort.find @effort.id
-        effort.to_hash.contrast_with! @effort.to_hash
+        effort.to_hash.contrast_with! @effort.to_hash, [:id, :created_at]
       end
     end
   end

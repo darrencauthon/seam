@@ -5,6 +5,7 @@ module Seam
     attr_accessor :id
     attr_accessor :next_execute_at
     attr_accessor :next_step
+    attr_accessor :flow
 
     class << self
 
@@ -26,6 +27,7 @@ module Seam
         effort.created_at      = Time.parse(document['created_at'].to_s)
         effort.next_execute_at = document['next_execute_at']
         effort.next_step       = document['next_step']
+        effort.flow            = document['flow']
         effort
       end
 
@@ -51,7 +53,8 @@ module Seam
         created_at:      self.created_at,
         completed_steps: self.completed_steps,
         next_execute_at: self.next_execute_at,
-        next_step:       self.next_step
+        next_step:       self.next_step,
+        flow:            self.flow
       }
     end
   end

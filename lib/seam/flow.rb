@@ -11,12 +11,19 @@ module Seam
 
     def start(data = {})
       effort = Seam::Effort.new
-      effort.id = SecureRandom.uuid.to_s
-      effort.created_at = Time.parse(Time.now.to_s)
+      effort.id              = SecureRandom.uuid.to_s
+      effort.created_at      = Time.parse(Time.now.to_s)
       effort.next_execute_at = Time.parse(Time.now.to_s)
-      effort.next_step = self.steps.first.name.to_s
+      effort.next_step       = self.steps.first.name.to_s
+      effort.flow            = self.to_hash
       effort.save
       effort
+    end
+
+    def to_hash
+      {
+        steps: self.steps.map { |x| x.to_hash }
+      }
     end
 
     def steps
