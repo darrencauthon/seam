@@ -28,5 +28,11 @@ describe "a useful example" do
       flow.steps[1].name.must_equal "determine_if_postcard_should_be_sent"
       flow.steps[2].name.must_equal "branch_on_postcard_should_be_sent"
     end
+
+    it "should set the step types of the three steps" do
+      flow.steps[0].type.must_equal "do"
+      flow.steps[1].type.must_equal "do"
+      flow.steps[2].type.must_equal "branch"
+    end
   end
 end

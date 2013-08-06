@@ -13,8 +13,10 @@ module Seam
       @steps.map do |x|
         step = Seam::Step.new
         step.name = x[0]
+        step.type = "do"
         if step.name.index('branch_on')
           step.name += "_#{x[1][0]}"
+          step.type = "branch"
         end
         step
       end
