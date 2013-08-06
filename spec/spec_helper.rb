@@ -4,6 +4,7 @@ require 'minitest/spec'
 require 'minitest/pride'
 require 'subtle'
 require 'timecop'
+require 'contrast'
 require 'mocha/setup'
 
 def test_moped_session

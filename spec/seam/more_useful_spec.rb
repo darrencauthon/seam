@@ -51,7 +51,7 @@ describe "a more useful example" do
 
     it "should save an effort in the db" do
       effort = Seam::Effort.find @effort.id
-      effort.id.must_equal @effort.id
+      effort.to_hash.contrast_with! @effort.to_hash
     end
   end
 end

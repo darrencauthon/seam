@@ -17,10 +17,18 @@ module Seam
       def find effort_id
         document = @session['efforts'].find( { id: effort_id } ).first
         return nil unless document
+        self.parse document
+      end
+
+      def parse document
         effort = Effort.new
-        effort.id = document['id']
+        effort.id              = document['id']
+        effort.created_at      = document['created_at']
+        effort.next_execute_at = document['next_execute_at']
+        effort.next_step       = document['next_step']
         effort
       end
+
     end
     
     def initialize
@@ -28,9 +36,17 @@ module Seam
     end
 
     def save
-      Seam::Effort.session['efforts'].insert({
-                                               id: self.id
-                                             })
+      Seam::Effort.session['efforts'].insert(self.to_hash)
+    end
+
+    def to_hash
+      {
+        id:              self.id,
+        created_at:      self.created_at,
+        completed_steps: self.completed_steps,
+        next_execute_at: self.next_execute_at,
+        next_step:       self.next_step
+      }
     end
   end
 end
