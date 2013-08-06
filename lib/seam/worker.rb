@@ -10,7 +10,7 @@ module Seam
     end
 
     def move_to_next_step
-      @current_effort.next_step = @current_effort.flow[:steps].last[:name]
+      @current_effort.next_step = @current_effort.flow['steps'].last['name']
       @current_effort.save
     end
 

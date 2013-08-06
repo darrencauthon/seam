@@ -17,6 +17,7 @@ describe "worker" do
       flow.orange
 
       effort = flow.start( { first_name: 'John' } )
+      effort = Seam::Effort.find(effort.id)
 
       effort.next_step.must_equal "apple"
 
@@ -40,13 +41,12 @@ describe "worker" do
       flow.apple
       flow.orange
 
-      flow.start( { first_name: 'John' } )
+      e = flow.start( { first_name: 'John' } )
+      Seam::Effort.find(e.id)
     end
 
     before do
       Timecop.freeze Time.parse('3/4/2013')
-
-
       effort.next_step.must_equal "apple"
 
       apple_worker = Seam::Worker.new
