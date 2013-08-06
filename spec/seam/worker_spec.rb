@@ -173,4 +173,119 @@ describe "worker" do
       apple_worker.count.must_equal 2
     end
   end
+
+  describe "a more realistic example" do
+
+    let(:flow) do
+      flow = Seam::Flow.new
+      flow.wait_for_attempting_contact_stage
+      flow.determine_if_postcard_should_be_sent
+      flow.send_postcard_if_necessary
+      flow
+    end
+
+    let(:effort_creator) do
+      ->() do
+        e = flow.start
+        Seam::Effort.find(e.id)
+      end
+    end
+    
+    let(:wait_for_attempting_contact_stage_worker) do
+      worker = Seam::Worker.new
+      worker.for(:wait_for_attempting_contact_stage)
+
+      def worker.process
+        @current_effort.data['hit 1'] ||= 0
+        @current_effort.data['hit 1'] += 1
+        move_to_next_step
+      end
+
+      worker
+    end
+
+    let(:determine_if_postcard_should_be_sent_worker) do
+      worker = Seam::Worker.new
+      worker.for(:determine_if_postcard_should_be_sent)
+
+      def worker.process
+        @current_effort.data['hit 2'] ||= 0
+        @current_effort.data['hit 2'] += 1
+        move_to_next_step
+      end
+
+      worker
+    end
+
+    let(:send_postcard_if_necessary_worker) do
+      worker = Seam::Worker.new
+      worker.for(:send_postcard_if_necessary)
+
+      def worker.process
+        @current_effort.data['hit 3'] ||= 0
+        @current_effort.data['hit 3'] += 1
+        move_to_next_step
+      end
+
+      worker
+    end
+
+    before do
+      Timecop.freeze Time.parse('1/6/2013')
+    end
+
+    it "should progress through the story" do
+
+      # SETUP
+      effort = effort_creator.call
+      effort.next_step.must_equal "wait_for_attempting_contact_stage"
+
+      # FIRST WAVE
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal "determine_if_postcard_should_be_sent"
+
+      # SECOND WAVE
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal "send_postcard_if_necessary"
+
+      # THIRD WAVE
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal nil
+
+      effort.data['hit 1'].must_equal 1
+      effort.data['hit 2'].must_equal 1
+      effort.data['hit 3'].must_equal 1
+      
+      # FUTURE WAVES
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+      send_postcard_if_necessary_worker.execute_all
+      determine_if_postcard_should_be_sent_worker.execute_all
+      wait_for_attempting_contact_stage_worker.execute_all
+
+      effort = Seam::Effort.find effort.id
+      effort.next_step.must_equal nil
+
+      effort.data['hit 1'].must_equal 1
+      effort.data['hit 2'].must_equal 1
+      effort.data['hit 3'].must_equal 1
+
+    end
+  end
 end

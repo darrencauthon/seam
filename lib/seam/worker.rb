@@ -16,7 +16,12 @@ module Seam
     end
 
     def move_to_next_step
-      @current_effort.next_step = @current_effort.flow['steps'].last['name']
+      @current_effort.completed_steps << @current_effort.next_step
+
+      steps = @current_effort.flow['steps'].map { |x| x['name'] }
+
+      next_step = steps[@current_effort.completed_steps.count]
+      @current_effort.next_step = next_step
       @current_effort.save
     end
 

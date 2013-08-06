@@ -35,6 +35,7 @@ module Seam
         effort.next_step       = document['next_step']
         effort.flow            = document['flow']
         effort.data            = document['data']
+        effort.completed_steps = document['completed_steps']
         effort
       end
 
