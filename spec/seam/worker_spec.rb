@@ -22,7 +22,7 @@ describe "worker" do
       effort.next_step.must_equal "apple"
 
       apple_worker = Seam::Worker.new
-      apple_worker.for(:apple)
+      apple_worker.handles(:apple)
       def apple_worker.process
         move_to_next_step
       end
@@ -50,7 +50,7 @@ describe "worker" do
       effort.next_step.must_equal "apple"
 
       apple_worker = Seam::Worker.new
-      apple_worker.for(:apple)
+      apple_worker.handles(:apple)
       def apple_worker.process
         try_again_in 1.day
       end
@@ -93,7 +93,7 @@ describe "worker" do
       Timecop.freeze Time.parse('1/6/2013')
 
       apple_worker = Seam::Worker.new
-      apple_worker.for(:apple)
+      apple_worker.handles(:apple)
       def apple_worker.process
         if @current_effort.data[:status] == 'Good'
           move_to_next_step
@@ -143,7 +143,7 @@ describe "worker" do
 
     let(:apple_worker) do
       apple_worker = Seam::Worker.new
-      apple_worker.for(:apple)
+      apple_worker.handles(:apple)
 
       apple_worker.class_eval do
         attr_accessor :count
@@ -193,7 +193,7 @@ describe "worker" do
     
     let(:wait_for_attempting_contact_stage_worker) do
       worker = Seam::Worker.new
-      worker.for(:wait_for_attempting_contact_stage)
+      worker.handles(:wait_for_attempting_contact_stage)
 
       def worker.process
         @current_effort.data['hit 1'] ||= 0
@@ -206,7 +206,7 @@ describe "worker" do
 
     let(:determine_if_postcard_should_be_sent_worker) do
       worker = Seam::Worker.new
-      worker.for(:determine_if_postcard_should_be_sent)
+      worker.handles(:determine_if_postcard_should_be_sent)
 
       def worker.process
         @current_effort.data['hit 2'] ||= 0
@@ -219,7 +219,7 @@ describe "worker" do
 
     let(:send_postcard_if_necessary_worker) do
       worker = Seam::Worker.new
-      worker.for(:send_postcard_if_necessary)
+      worker.handles(:send_postcard_if_necessary)
 
       def worker.process
         @current_effort.data['hit 3'] ||= 0
@@ -312,7 +312,7 @@ describe "worker" do
     
     let(:wait_for_attempting_contact_stage_worker) do
       worker = Seam::Worker.new
-      worker.for(:wait_for_attempting_contact_stage)
+      worker.handles(:wait_for_attempting_contact_stage)
 
       def worker.process
         @current_effort.data['hit 1'] ||= 0
@@ -329,7 +329,7 @@ describe "worker" do
 
     let(:determine_if_postcard_should_be_sent_worker) do
       worker = Seam::Worker.new
-      worker.for(:determine_if_postcard_should_be_sent)
+      worker.handles(:determine_if_postcard_should_be_sent)
 
       def worker.process
         @current_effort.data['hit 2'] ||= 0
@@ -342,7 +342,7 @@ describe "worker" do
 
     let(:send_postcard_if_necessary_worker) do
       worker = Seam::Worker.new
-      worker.for(:send_postcard_if_necessary)
+      worker.handles(:send_postcard_if_necessary)
 
       def worker.process
         @current_effort.data['hit 3'] ||= 0
@@ -412,7 +412,7 @@ describe "worker" do
     
     let(:wait_for_attempting_contact_stage_worker) do
       worker = Seam::Worker.new
-      worker.for(:wait_for_attempting_contact_stage)
+      worker.handles(:wait_for_attempting_contact_stage)
 
       def worker.process
         @current_effort.data['hit 1'] ||= 0
@@ -429,7 +429,7 @@ describe "worker" do
 
     let(:determine_if_postcard_should_be_sent_worker) do
       worker = Seam::Worker.new
-      worker.for(:determine_if_postcard_should_be_sent)
+      worker.handles(:determine_if_postcard_should_be_sent)
 
       def worker.process
         @current_effort.data['hit 2'] ||= 0
@@ -442,7 +442,7 @@ describe "worker" do
 
     let(:send_postcard_if_necessary_worker) do
       worker = Seam::Worker.new
-      worker.for(:send_postcard_if_necessary)
+      worker.handles(:send_postcard_if_necessary)
 
       def worker.process
         @current_effort.data['hit 3'] ||= 0
@@ -557,7 +557,7 @@ describe "worker" do
       effort.next_step.must_equal "apple"
 
       apple_worker = Seam::Worker.new
-      apple_worker.for(:apple)
+      apple_worker.handles(:apple)
       def apple_worker.process
         eject
       end

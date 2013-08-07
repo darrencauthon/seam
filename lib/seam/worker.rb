@@ -1,6 +1,6 @@
 module Seam
   class Worker
-    def for(step)
+    def handles(step)
       @step = step
     end
 
@@ -16,11 +16,11 @@ module Seam
       @current_run = HashWithIndifferentAccess.new( { 
                                                       started_at: Time.now,
                                                       step: @step.to_s, 
-                                                      data_before: effort.data,
+                                                      data_before: effort.data.clone,
                                                     } )
       @current_effort = effort
       process
-      history[:data_after] = effort.data
+      history[:data_after] = effort.data.clone
       history[:stopped_at] = Time.now
       effort.history << history
       effort.save
