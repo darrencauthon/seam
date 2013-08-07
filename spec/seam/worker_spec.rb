@@ -540,4 +540,40 @@ describe "worker" do
       effort.history[4].contrast_with!({"started_at"=> Time.now, "step"=>"send_postcard_if_necessary", "stopped_at" => Time.now, "result" => "move_to_next_step" } )
     end
   end
+
+  describe "eject" do
+
+    let(:effort) do
+      flow = Seam::Flow.new
+      flow.apple
+      flow.orange
+
+      e = flow.start( { first_name: 'John' } )
+      Seam::Effort.find(e.id)
+    end
+
+    before do
+      Timecop.freeze Time.parse('5/11/2013')
+      effort.next_step.must_equal "apple"
+
+      apple_worker = Seam::Worker.new
+      apple_worker.for(:apple)
+      def apple_worker.process
+        eject
+      end
+
+      apple_worker.execute effort
+    end
+
+    it "should mark the step as completed" do
+      fresh_effort = Seam::Effort.find(effort.id)
+      fresh_effort.complete?.must_equal true
+    end
+
+    it "should mark the next step to nil" do
+      fresh_effort = Seam::Effort.find(effort.id)
+      fresh_effort.next_step.nil?.must_equal true
+    end
+
+  end
 end

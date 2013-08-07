@@ -24,6 +24,12 @@ module Seam
       end
     end
 
+    def eject
+      @current_effort.complete = true
+      @current_effort.next_step = nil
+      @current_effort.save
+    end
+
     def move_to_next_step
       @current_run[:result] = "move_to_next_step"
       @current_effort.completed_steps << @current_effort.next_step
