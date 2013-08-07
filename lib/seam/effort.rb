@@ -17,7 +17,7 @@ module Seam
       end
 
       def find_all_by_step step
-        Seam::Persistence.find_all_by_step step
+        Seam::Persistence.find_all_pending_executions_by_step step
       end
 
       def parse document
