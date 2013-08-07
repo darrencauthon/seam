@@ -26,9 +26,9 @@ module Seam
         effort.created_at      = Time.parse(document['created_at'].to_s)
         effort.next_execute_at = document['next_execute_at']
         effort.next_step       = document['next_step']
-        effort.flow            = document['flow']
-        effort.data            = document['data']
-        effort.history         = document['history']
+        effort.flow            = HashWithIndifferentAccess.new document['flow']
+        effort.data            = HashWithIndifferentAccess.new document['data']
+        effort.history         = document['history'].each.map { |x| HashWithIndifferentAccess.new x }
         effort.completed_steps = document['completed_steps']
         effort.complete        = document['complete']
         effort

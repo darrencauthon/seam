@@ -95,7 +95,7 @@ describe "worker" do
       apple_worker = Seam::Worker.new
       apple_worker.for(:apple)
       def apple_worker.process
-        if @current_effort.data['status'] == 'Good'
+        if @current_effort.data[:status] == 'Good'
           move_to_next_step
         else
           try_again_in 1.day

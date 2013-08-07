@@ -8,7 +8,7 @@ module Seam
       {
         name: name,
         type: type,
-        arguments: arguments
+        arguments: HashWithIndifferentAccess.new(arguments || {})
       }
     end
   end
