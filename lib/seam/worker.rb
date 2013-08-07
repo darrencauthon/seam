@@ -5,9 +5,14 @@ module Seam
     end
 
     def execute effort
-      @current_run = HashWithIndifferentAccess.new({ started_at: Time.now, step: @step.to_s, data_before: effort.data })
+      @current_run = HashWithIndifferentAccess.new( { 
+                                                      started_at: Time.now,
+                                                      step: @step.to_s, 
+                                                      data_before: effort.data,
+                                                    } )
       @current_effort = effort
       process
+      @current_run[:data_after] = effort.data
       @current_run[:stopped_at] = Time.now
       @current_effort.history << @current_run
       @current_effort.save

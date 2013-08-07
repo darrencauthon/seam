@@ -472,7 +472,13 @@ describe "worker" do
       effort.next_step.must_equal "wait_for_attempting_contact_stage"
 
       effort.history.count.must_equal 1
-      effort.history[0].contrast_with!({"started_at"=> Time.now, "step"=>"wait_for_attempting_contact_stage", "stopped_at" => Time.now, "data_before" => { "first_name" => "DARREN" } } )
+      effort.history[0].contrast_with!( {
+                                          "started_at"=> Time.now, 
+                                          "step"=>"wait_for_attempting_contact_stage",
+                                          "stopped_at" => Time.now, 
+                                          "data_before" => { "first_name" => "DARREN" } ,
+                                          "data_after"  => { "first_name" => "DARREN", "hit 1" => 1 } 
+                                        } )
 
       send_postcard_if_necessary_worker.execute_all
       determine_if_postcard_should_be_sent_worker.execute_all
