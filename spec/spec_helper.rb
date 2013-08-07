@@ -12,4 +12,4 @@ def test_moped_session
   session.use "seam_test"
 end
 
-Seam::Effort.set_collection test_moped_session['efforts']
+Seam::MongoDb.set_collection test_moped_session['efforts']
