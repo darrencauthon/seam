@@ -2,6 +2,7 @@ module Seam
   class Effort
     attr_accessor :completed_steps
     attr_accessor :created_at
+    attr_accessor :complete
     attr_accessor :id
     attr_accessor :next_execute_at
     attr_accessor :next_step
@@ -39,6 +40,7 @@ module Seam
         effort.data            = document['data']
         effort.history         = document['history']
         effort.completed_steps = document['completed_steps']
+        effort.complete        = document['complete']
         effort
       end
 
@@ -47,6 +49,7 @@ module Seam
     def initialize
       @completed_steps = []
       @history         = []
+      @complete        = false
     end
 
     def save
@@ -59,6 +62,10 @@ module Seam
       end
     end
 
+    def complete?
+      complete
+    end
+
     def to_hash
       {
         id:              self.id,
@@ -69,6 +76,7 @@ module Seam
         flow:            self.flow,
         data:            self.data,
         history:         self.history,
+        complete:        self.complete,
       }
     end
   end

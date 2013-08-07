@@ -27,6 +27,7 @@ module Seam
 
       next_step = steps[@current_effort.completed_steps.count]
       @current_effort.next_step = next_step
+      @current_effort.complete  = next_step.nil?
       @current_effort.save
     end
 

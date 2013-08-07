@@ -248,6 +248,8 @@ describe "worker" do
       effort = Seam::Effort.find effort.id
       effort.next_step.must_equal "determine_if_postcard_should_be_sent"
 
+      effort.complete?.must_equal false
+
       # SECOND WAVE
       send_postcard_if_necessary_worker.execute_all
       determine_if_postcard_should_be_sent_worker.execute_all
@@ -267,6 +269,8 @@ describe "worker" do
       effort.data['hit 1'].must_equal 1
       effort.data['hit 2'].must_equal 1
       effort.data['hit 3'].must_equal 1
+
+      effort.complete?.must_equal true
       
       # FUTURE WAVES
       send_postcard_if_necessary_worker.execute_all
@@ -359,7 +363,7 @@ describe "worker" do
       effort = effort_creator.call
       effort.next_step.must_equal "wait_for_attempting_contact_stage"
 
-      # FIRST WAVE
+      # FIRST DAY
       send_postcard_if_necessary_worker.execute_all
       determine_if_postcard_should_be_sent_worker.execute_all
       wait_for_attempting_contact_stage_worker.execute_all
@@ -459,7 +463,7 @@ describe "worker" do
       effort = effort_creator.call
       effort.next_step.must_equal "wait_for_attempting_contact_stage"
 
-      # FIRST WAVE
+      # FIRST DAY
       send_postcard_if_necessary_worker.execute_all
       determine_if_postcard_should_be_sent_worker.execute_all
       wait_for_attempting_contact_stage_worker.execute_all
