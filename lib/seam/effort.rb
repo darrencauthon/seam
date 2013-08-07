@@ -12,20 +12,20 @@ module Seam
 
     class << self
 
-      attr_accessor :session
+      attr_accessor :collection
 
-      def set_session session
-        @session = session
+      def set_collection collection
+        @collection = collection
       end
 
       def find effort_id
-        document = @session['efforts'].find( { id: effort_id } ).first
+        document = collection.find( { id: effort_id } ).first
         return nil unless document
         self.parse document
       end
 
       def find_all_by_step step
-        @session['efforts']
+        collection
           .find( { next_step: step, next_execute_at: { '$lte' => Time.now } } )
           .map { |x| Seam::Effort.parse x }
       end
@@ -55,10 +55,10 @@ module Seam
     def save
       existing_record = Seam::Effort.find self.id
       if existing_record
-        Seam::Effort.session['efforts'].find( { id: self.id } )
+        Seam::Effort.collection.find( { id: self.id } )
             .update("$set" => self.to_hash)
       else
-        Seam::Effort.session['efforts'].insert(self.to_hash)
+        Seam::Effort.collection.insert(self.to_hash)
       end
     end
 

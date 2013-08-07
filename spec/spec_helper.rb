@@ -12,4 +12,4 @@ def test_moped_session
   session.use "seam_test"
 end
 
-Seam::Effort.set_session test_moped_session
+Seam::Effort.set_collection test_moped_session['efforts']
