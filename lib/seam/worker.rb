@@ -4,6 +4,14 @@ module Seam
       @step = step
     end
 
+    def effort
+      @current_effort
+    end
+
+    def history
+      @current_run
+    end
+
     def execute effort
       @current_run = HashWithIndifferentAccess.new( { 
                                                       started_at: Time.now,
@@ -12,10 +20,10 @@ module Seam
                                                     } )
       @current_effort = effort
       process
-      @current_run[:data_after] = effort.data
-      @current_run[:stopped_at] = Time.now
-      @current_effort.history << @current_run
-      @current_effort.save
+      history[:data_after] = effort.data
+      history[:stopped_at] = Time.now
+      effort.history << history
+      effort.save
     end
 
     def execute_all
@@ -25,32 +33,32 @@ module Seam
     end
 
     def eject
-      @current_run[:result] = "eject"
-      @current_effort.complete = true
-      @current_effort.next_step = nil
-      @current_effort.save
+      history[:result] = "eject"
+      effort.complete = true
+      effort.next_step = nil
+      effort.save
     end
 
     def move_to_next_step
-      @current_run[:result] = "move_to_next_step"
-      @current_effort.completed_steps << @current_effort.next_step
+      history[:result] = "move_to_next_step"
+      effort.completed_steps << effort.next_step
 
-      steps = @current_effort.flow['steps'].map { |x| x['name'] }
+      steps = effort.flow['steps'].map { |x| x['name'] }
 
-      next_step = steps[@current_effort.completed_steps.count]
-      @current_effort.next_step = next_step
-      @current_effort.complete  = next_step.nil?
-      @current_effort.save
+      next_step = steps[effort.completed_steps.count]
+      effort.next_step = next_step
+      effort.complete  = next_step.nil?
+      effort.save
     end
 
     def try_again_in seconds
       try_again_on = Time.now + seconds
 
-      @current_run[:result] = "try_again_in"
-      @current_run[:try_again_on] = try_again_on
+      history[:result] = "try_again_in"
+      history[:try_again_on] = try_again_on
 
-      @current_effort.next_execute_at = try_again_on
-      @current_effort.save
+      effort.next_execute_at = try_again_on
+      effort.save
     end
   end
 end
