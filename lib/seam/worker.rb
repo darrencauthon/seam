@@ -25,6 +25,7 @@ module Seam
     end
 
     def eject
+      @current_run[:result] = "eject"
       @current_effort.complete = true
       @current_effort.next_step = nil
       @current_effort.save
