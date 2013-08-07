@@ -28,7 +28,7 @@ module Seam
         effort.next_step       = document['next_step']
         effort.flow            = HashWithIndifferentAccess.new document['flow']
         effort.data            = HashWithIndifferentAccess.new document['data']
-        effort.history         = document['history'].each.map { |x| HashWithIndifferentAccess.new x }
+        effort.history         = document['history'].map { |x| HashWithIndifferentAccess.new x }
         effort.completed_steps = document['completed_steps']
         effort.complete        = document['complete']
         effort
