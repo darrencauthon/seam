@@ -13,15 +13,11 @@ module Seam
     class << self
 
       def find effort_id
-        document = Seam::MongoDb.collection.find( { id: effort_id } ).first
-        return nil unless document
-        self.parse document
+        Seam::Persistence.find_by_effort_id effort_id
       end
 
       def find_all_by_step step
-        Seam::MongoDb.collection
-          .find( { next_step: step, next_execute_at: { '$lte' => Time.now } } )
-          .map { |x| Seam::Effort.parse x }
+        Seam::Persistence.find_all_by_step step
       end
 
       def parse document
@@ -49,10 +45,9 @@ module Seam
     def save
       existing_record = Seam::Effort.find self.id
       if existing_record
-        Seam::MongoDb.collection.find( { id: self.id } )
-            .update("$set" => self.to_hash)
+        Seam::Persistence.save self
       else
-        Seam::MongoDb.collection.insert(self.to_hash)
+        Seam::Persistence.create self
       end
     end
 
