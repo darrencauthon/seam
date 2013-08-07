@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "json"
-  spec.add_runtime_dependency "active_support", "~> 3"
+  spec.add_runtime_dependency "active_support", ">= 3"
   spec.add_runtime_dependency "i18n"
   spec.add_runtime_dependency "moped"
   spec.add_runtime_dependency "json"
