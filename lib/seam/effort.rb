@@ -68,5 +68,9 @@ module Seam
         complete:        self.complete,
       }
     end
+
+    def clone
+      Seam::Effort.parse HashWithIndifferentAccess.new(self.to_hash)
+    end
   end
 end
