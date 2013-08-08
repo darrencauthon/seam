@@ -34,8 +34,9 @@ module Seam
 
     def eject
       history[:result] = "eject"
-      effort.complete = true
-      effort.next_step = nil
+      effort.complete     = true
+      effort.completed_at = Time.now
+      effort.next_step    = nil
       effort.save
     end
 

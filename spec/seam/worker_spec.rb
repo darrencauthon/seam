@@ -271,6 +271,7 @@ describe "worker" do
       effort.data['hit 3'].must_equal 1
 
       effort.complete?.must_equal true
+      #effort.completed_at.must_equal Time.now
       
       # FUTURE WAVES
       send_postcard_if_necessary_worker.execute_all

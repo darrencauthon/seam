@@ -3,6 +3,7 @@ module Seam
     attr_accessor :completed_steps
     attr_accessor :created_at
     attr_accessor :complete
+    attr_accessor :completed_at
     attr_accessor :id
     attr_accessor :next_execute_at
     attr_accessor :next_step
@@ -31,6 +32,7 @@ module Seam
         effort.history         = document['history'].map { |x| HashWithIndifferentAccess.new x }
         effort.completed_steps = document['completed_steps']
         effort.complete        = document['complete']
+        effort.completed_at    = document['completed_at']
         effort
       end
 
@@ -60,6 +62,7 @@ module Seam
         id:              self.id,
         created_at:      self.created_at,
         completed_steps: self.completed_steps,
+        completed_at:    self.completed_at,
         next_execute_at: self.next_execute_at,
         next_step:       self.next_step,
         flow:            self.flow,
