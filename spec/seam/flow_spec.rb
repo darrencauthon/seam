@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "flow" do
   before do
-    test_moped_session['efforts'].drop
+    Seam::Persistence.destroy
   end
 
   after do

@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Seam::Effort do
   before do
-    test_moped_session['efforts'].drop
+    Seam::Persistence.destroy
   end
 
   let(:flow) do
@@ -15,14 +15,14 @@ describe Seam::Effort do
   describe "updating an effort" do
     it "should not create another document in the collection" do
       first_effort = flow.start
-      test_moped_session['efforts'].find.count.must_equal 1
+      Seam::Persistence.all.count.must_equal 1
       first_effort.save
-      test_moped_session['efforts'].find.count.must_equal 1
+      Seam::Persistence.all.count.must_equal 1
 
       second_effort = flow.start
-      test_moped_session['efforts'].find.count.must_equal 2
+      Seam::Persistence.all.count.must_equal 2
       second_effort.save
-      test_moped_session['efforts'].find.count.must_equal 2
+      Seam::Persistence.all.count.must_equal 2
     end
 
     it "should update the information" do
