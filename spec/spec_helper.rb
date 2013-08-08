@@ -6,10 +6,3 @@ require 'subtle'
 require 'timecop'
 require 'contrast'
 require 'mocha/setup'
-
-def test_moped_session
-  session = Moped::Session.new([ "127.0.0.1:27017" ])
-  session.use "seam_test"
-end
-
-Seam::MongoDb.set_collection test_moped_session['efforts']
