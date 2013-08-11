@@ -34,8 +34,7 @@ module Seam
 
     def eject
       history[:result] = "eject"
-      effort.complete     = true
-      effort.completed_at = Time.now
+      mark_effort_as_complete
       effort.next_step    = nil
       effort.save
     end
@@ -48,10 +47,7 @@ module Seam
 
       next_step = steps[effort.completed_steps.count]
       effort.next_step = next_step
-      if next_step.nil?
-        effort.complete     = true
-        effort.completed_at = Time.now
-      end
+      mark_effort_as_complete if next_step.nil?
       effort.save
     end
 
@@ -63,6 +59,13 @@ module Seam
 
       effort.next_execute_at = try_again_on
       effort.save
+    end
+
+    private
+
+    def mark_effort_as_complete
+      effort.complete     = true
+      effort.completed_at = Time.now
     end
   end
 end
