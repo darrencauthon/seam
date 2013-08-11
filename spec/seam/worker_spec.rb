@@ -575,6 +575,11 @@ describe "worker" do
       fresh_effort = Seam::Effort.find(effort.id)
       fresh_effort.next_step.nil?.must_equal true
     end
+
+    it "should mark the completed_at date" do
+      fresh_effort = Seam::Effort.find(effort.id)
+      fresh_effort.completed_at.must_equal Time.now
+    end
     
     it "should mark the history" do
       effort.history[0].contrast_with!({"step"=>"apple", "result" => "eject" } )
