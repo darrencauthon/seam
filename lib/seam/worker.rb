@@ -13,17 +13,9 @@ module Seam
     end
 
     def execute effort
-      @current_run = HashWithIndifferentAccess.new( { 
-                                                      started_at: Time.now,
-                                                      step: @step.to_s, 
-                                                      data_before: effort.data.clone,
-                                                    } )
-      @current_effort = effort
+      before_process
       process
-      history[:data_after] = effort.data.clone
-      history[:stopped_at] = Time.now
-      effort.history << history
-      effort.save
+      after_process
     end
 
     def execute_all
@@ -62,6 +54,23 @@ module Seam
     end
 
     private
+
+    def before_process
+      run = { 
+              started_at: Time.now,
+              step: @step.to_s, 
+              data_before: effort.data.clone,
+            }
+      @current_run = HashWithIndifferentAccess.new run
+      @current_effort = effort
+    end
+
+    def after_process
+      history[:data_after] = effort.data.clone
+      history[:stopped_at] = Time.now
+      effort.history << history
+      effort.save
+    end
 
     def mark_effort_as_complete
       effort.complete     = true
