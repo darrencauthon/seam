@@ -48,7 +48,10 @@ module Seam
 
       next_step = steps[effort.completed_steps.count]
       effort.next_step = next_step
-      effort.complete  = next_step.nil?
+      if next_step.nil?
+        effort.complete     = true
+        effort.completed_at = Time.now
+      end
       effort.save
     end
 
