@@ -13,6 +13,7 @@ module Seam
     end
 
     def execute effort
+      set_current_effort effort
       before_process
       process
       after_process
@@ -55,6 +56,15 @@ module Seam
 
     private
 
+    def mark_effort_as_complete
+      effort.complete     = true
+      effort.completed_at = Time.now
+    end
+
+    def set_current_effort effort
+      @current_effort = effort
+    end
+
     def before_process
       run = { 
               started_at: Time.now,
@@ -62,7 +72,6 @@ module Seam
               data_before: effort.data.clone,
             }
       @current_run = HashWithIndifferentAccess.new run
-      @current_effort = effort
     end
 
     def after_process
@@ -70,11 +79,6 @@ module Seam
       history[:stopped_at] = Time.now
       effort.history << history
       effort.save
-    end
-
-    def mark_effort_as_complete
-      effort.complete     = true
-      effort.completed_at = Time.now
     end
   end
 end
