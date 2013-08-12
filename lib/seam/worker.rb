@@ -24,7 +24,7 @@ module Seam
     end
 
     def try_again_in seconds
-      @operation_to_execute = :try_again_in
+      @operation_to_execute    = :try_again_in
       operation_args[:seconds] = seconds
     end
 
@@ -100,9 +100,10 @@ module Seam
     end
 
     def stamp_the_new_history_record
-      history[:result] = @operation_to_execute
+      history[:result]     = @operation_to_execute
       history[:data_after] = effort.data.clone
       history[:stopped_at] = Time.now
+
       effort.history << history
     end
 
