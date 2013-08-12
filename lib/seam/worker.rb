@@ -1,6 +1,6 @@
 module Seam
   class Worker
-    def handles(step)
+    def handles step
       @step = step
     end
 
