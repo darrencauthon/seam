@@ -24,32 +24,53 @@ module Seam
     end
 
     def eject
-      history[:result] = "eject"
-      mark_effort_as_complete
-      effort.next_step    = nil
-      effort.save
+      operations[:eject].call
     end
 
     def move_to_next_step
-      history[:result] = "move_to_next_step"
-      effort.completed_steps << effort.next_step
-
-      steps = effort.flow['steps'].map { |x| x['name'] }
-
-      next_step = steps[effort.completed_steps.count]
-      effort.next_step = next_step
-      mark_effort_as_complete if next_step.nil?
-      effort.save
+      operations[:move_to_next_step].call
     end
 
     def try_again_in seconds
-      try_again_on = Time.now + seconds
+      operation_args[:seconds] = seconds
+      operations[:try_again_in].call
+    end
 
-      history[:result] = "try_again_in"
-      history[:try_again_on] = try_again_on
+    attr_accessor :operation_args
+    def operation_args
+      @operation_args ||= {}
+    end
 
-      effort.next_execute_at = try_again_on
-      effort.save
+    def operations
+      {
+        try_again_in: -> do
+                           seconds = operation_args[:seconds]
+                           try_again_on = Time.now + seconds
+
+                           history[:result] = "try_again_in"
+                           history[:try_again_on] = try_again_on
+
+                           effort.next_execute_at = try_again_on
+                           effort.save
+                         end,
+        move_to_next_step: -> do
+                                history[:result] = "move_to_next_step"
+                                effort.completed_steps << effort.next_step
+
+                                steps = effort.flow['steps'].map { |x| x['name'] }
+
+                                next_step = steps[effort.completed_steps.count]
+                                effort.next_step = next_step
+                                mark_effort_as_complete if next_step.nil?
+                                effort.save
+                              end,
+        eject: -> do
+                    history[:result] = "eject"
+                    mark_effort_as_complete
+                    effort.next_step = nil
+                    effort.save
+                  end
+      }
     end
 
     private
