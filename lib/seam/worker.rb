@@ -42,7 +42,6 @@ module Seam
                            history[:try_again_on] = try_again_on
 
                            effort.next_execute_at = try_again_on
-                           effort.save
                          end,
         move_to_next_step: -> do
                                 effort.completed_steps << effort.next_step
@@ -52,12 +51,10 @@ module Seam
                                 next_step = steps[effort.completed_steps.count]
                                 effort.next_step = next_step
                                 mark_effort_as_complete if next_step.nil?
-                                effort.save
                               end,
         eject: -> do
                     mark_effort_as_complete
                     effort.next_step = nil
-                    effort.save
                   end
       }
     end
