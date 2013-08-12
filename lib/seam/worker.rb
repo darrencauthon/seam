@@ -4,14 +4,6 @@ module Seam
       @step = step
     end
 
-    def effort
-      @current_effort
-    end
-
-    def history
-      @current_run
-    end
-
     def execute effort
       set_current_effort effort
       before_process
@@ -73,6 +65,14 @@ module Seam
       }
     end
 
+    def effort
+      @current_effort
+    end
+
+    def history
+      @current_run
+    end
+
     private
 
     def mark_effort_as_complete
@@ -94,17 +94,27 @@ module Seam
     end
 
     def after_process
-      operations[@operation_to_execute].call if @operation_to_execute
-
-      history[:data_after] = effort.data.clone
-      history[:stopped_at] = Time.now
-      effort.history << history
-
-      effort.save
+      execute_the_appropriate_operation
+      stamp_the_new_history_record
+      save_the_effort
     end
 
     def efforts_to_execute
       Seam::Effort.find_all_by_step(@step.to_s)
+    end
+
+    def execute_the_appropriate_operation
+      operations[@operation_to_execute].call if @operation_to_execute
+    end
+
+    def stamp_the_new_history_record
+      history[:data_after] = effort.data.clone
+      history[:stopped_at] = Time.now
+      effort.history << history
+    end
+
+    def save_the_effort
+      effort.save
     end
   end
 end
