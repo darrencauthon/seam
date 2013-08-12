@@ -20,9 +20,7 @@ module Seam
     end
 
     def execute_all
-      Seam::Effort.find_all_by_step(@step.to_s).each do |effort|
-        execute effort
-      end
+      efforts_to_execute.each { |e| execute e }
     end
 
     def eject
@@ -79,6 +77,10 @@ module Seam
       history[:stopped_at] = Time.now
       effort.history << history
       effort.save
+    end
+
+    def efforts_to_execute
+      Seam::Effort.find_all_by_step(@step.to_s)
     end
   end
 end
