@@ -96,7 +96,8 @@ module Seam
     end
 
     def execute_the_appropriate_operation
-      operations[@operation_to_execute].call if @operation_to_execute
+      @operation_to_execute ||= :move_to_next_step
+      operations[@operation_to_execute].call
     end
 
     def stamp_the_new_history_record

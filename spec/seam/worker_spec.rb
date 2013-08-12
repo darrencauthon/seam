@@ -34,6 +34,29 @@ describe "worker" do
     end
   end
 
+  describe "move_to_next_step as a default" do
+    it "should go to move_to_next_step by default" do
+      flow = Seam::Flow.new
+      flow.apple
+      flow.orange
+
+      effort = flow.start( { first_name: 'John' } )
+      effort = Seam::Effort.find(effort.id)
+
+      effort.next_step.must_equal "apple"
+
+      apple_worker = Seam::Worker.new
+      apple_worker.handles(:apple)
+      def apple_worker.process
+      end
+
+      apple_worker.execute effort
+
+      effort = Seam::Effort.find(effort.id)
+      effort.next_step.must_equal "orange"
+    end
+  end
+
   describe "try_again_in" do
 
     let(:effort) do
