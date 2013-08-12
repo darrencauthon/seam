@@ -35,27 +35,24 @@ module Seam
 
     def operations
       {
-        try_again_in: -> do
-                           seconds = operation_args[:seconds]
-                           try_again_on = Time.now + seconds
+        try_again_in:      -> do
+                                seconds = operation_args[:seconds]
+                                try_again_on = Time.now + seconds
 
-                           history[:try_again_on] = try_again_on
+                                history[:try_again_on] = try_again_on
 
-                           effort.next_execute_at = try_again_on
-                         end,
+                                effort.next_execute_at = try_again_on
+                              end,
         move_to_next_step: -> do
                                 effort.completed_steps << effort.next_step
 
                                 steps = effort.flow['steps'].map { |x| x['name'] }
-
                                 next_step = steps[effort.completed_steps.count]
+
                                 effort.next_step = next_step
                                 mark_effort_as_complete if next_step.nil?
                               end,
-        eject: -> do
-                    mark_effort_as_complete
-                    effort.next_step = nil
-                  end
+        eject:             -> { mark_effort_as_complete }
       }
     end
 
@@ -70,6 +67,7 @@ module Seam
     private
 
     def mark_effort_as_complete
+      effort.next_step    = nil
       effort.complete     = true
       effort.completed_at = Time.now
     end
