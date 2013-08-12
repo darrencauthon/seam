@@ -24,16 +24,16 @@ module Seam
     end
 
     def eject
-      operations[:eject].call
+      @operation_to_execute = :eject
     end
 
     def move_to_next_step
-      operations[:move_to_next_step].call
+      @operation_to_execute = :move_to_next_step
     end
 
     def try_again_in seconds
+      @operation_to_execute = :try_again_in
       operation_args[:seconds] = seconds
-      operations[:try_again_in].call
     end
 
     attr_accessor :operation_args
@@ -94,9 +94,12 @@ module Seam
     end
 
     def after_process
+      operations[@operation_to_execute].call if @operation_to_execute
+
       history[:data_after] = effort.data.clone
       history[:stopped_at] = Time.now
       effort.history << history
+
       effort.save
     end
 
