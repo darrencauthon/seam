@@ -39,14 +39,12 @@ module Seam
                            seconds = operation_args[:seconds]
                            try_again_on = Time.now + seconds
 
-                           history[:result] = "try_again_in"
                            history[:try_again_on] = try_again_on
 
                            effort.next_execute_at = try_again_on
                            effort.save
                          end,
         move_to_next_step: -> do
-                                history[:result] = "move_to_next_step"
                                 effort.completed_steps << effort.next_step
 
                                 steps = effort.flow['steps'].map { |x| x['name'] }
@@ -57,7 +55,6 @@ module Seam
                                 effort.save
                               end,
         eject: -> do
-                    history[:result] = "eject"
                     mark_effort_as_complete
                     effort.next_step = nil
                     effort.save
@@ -108,6 +105,7 @@ module Seam
     end
 
     def stamp_the_new_history_record
+      history[:result] = @operation_to_execute
       history[:data_after] = effort.data.clone
       history[:stopped_at] = Time.now
       effort.history << history
