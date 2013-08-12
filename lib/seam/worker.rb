@@ -78,9 +78,9 @@ module Seam
 
     def before_process
       run = { 
-              started_at: Time.now,
-              step: @step.to_s, 
-              data_before: effort.data.clone,
+              started_at:  Time.now,
+              step:        step, 
+              data_before: effort.data.clone
             }
       @current_run = HashWithIndifferentAccess.new run
     end
@@ -92,7 +92,12 @@ module Seam
     end
 
     def efforts_to_execute
-      Seam::Effort.find_all_by_step(@step.to_s)
+      Seam::Effort.find_all_by_step step
+    end
+
+    def step
+      s = @step || self.class.name.underscore.gsub('_worker', '')
+      s.to_s
     end
 
     def execute_the_appropriate_operation

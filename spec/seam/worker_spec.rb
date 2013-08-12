@@ -609,4 +609,32 @@ describe "worker" do
     end
 
   end
+
+  describe "use the name of the worker to tie to a step" do
+
+    let(:effort) do
+      flow = Seam::Flow.new
+      flow.i_will_not_call_handles
+
+      e = flow.start
+      Seam::Effort.find(e.id)
+    end
+
+    before do
+      effort
+      worker = IWillNotCallHandlesWorker.new
+      IWillNotCallHandlesWorker.new.execute_all
+    end
+
+    it "should complete the effort" do
+      fresh_effort = Seam::Effort.find effort.id
+      fresh_effort.complete?.must_equal true
+    end
+
+  end
+end
+
+class IWillNotCallHandlesWorker < Seam::Worker
+  # no calling handles here
+  def process; end
 end
