@@ -36,10 +36,6 @@ module Seam
         step.name = key
         step.type = "do"
         step.arguments = value
-        if step.name.index('branch_on')
-          step.name += "_#{value[0]}"
-          step.type = "branch"
-        end
         step
       end
     end
