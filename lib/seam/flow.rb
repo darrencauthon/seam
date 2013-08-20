@@ -31,12 +31,11 @@ module Seam
     end
 
     def steps
-      @steps.each.map do |key, value|
-        step = Seam::Step.new
-        step.name      = key
-        step.type      = "do"
-        step.arguments = value
-        step
+      @steps.each.map do |name, arguments|
+        Seam::Step.new( { name:       name,
+                          type:      'do',
+                          arguments: arguments } )
+
       end
     end
   end

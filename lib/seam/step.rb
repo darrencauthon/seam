@@ -4,6 +4,10 @@ module Seam
     attr_accessor :type
     attr_accessor :arguments
 
+    def initialize(args = {})
+      args.each { |k, v| self.send "#{k}=".to_sym, v }
+    end
+
     def to_hash
       {
         name: name,
