@@ -6,7 +6,9 @@ module Seam
     end
 
     def method_missing(meth, *args, &blk)
+      return false if @steps.select { |x| x[0] == meth.to_s }.count > 0
       @steps << [meth.to_s, args]
+      true
     end
 
     def start(data = {})

@@ -94,4 +94,24 @@ describe "flow" do
       end
     end
   end
+
+  describe "adding steps" do
+    describe "new steps" do
+      it "should return true" do
+        flow = Seam::Flow.new
+        flow.do_something.must_equal true
+        flow.do_something_else.must_equal true
+      end
+    end
+
+    describe "repeating steps" do
+      it "should only add the step once" do
+        flow = Seam::Flow.new
+        flow.do_something.must_equal true
+        flow.steps.count.must_equal 1
+        flow.do_something.must_equal false
+        flow.steps.count.must_equal 1
+      end
+    end
+  end
 end
