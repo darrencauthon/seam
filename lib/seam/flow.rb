@@ -6,8 +6,9 @@ module Seam
     end
 
     def method_missing(meth, *args, &blk)
-      return false if @steps[meth.to_s]
-      @steps[meth.to_s] = args
+      meth = meth.to_s
+      return false if @steps[meth]
+      @steps[meth] = args
       true
     end
 
