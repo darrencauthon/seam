@@ -22,18 +22,18 @@ module Seam
       end
 
       def parse document
-        effort = Effort.new
-        effort.id              = document['id']
-        effort.created_at      = Time.parse(document['created_at'].to_s)
-        effort.next_execute_at = document['next_execute_at']
-        effort.next_step       = document['next_step']
-        effort.flow            = HashWithIndifferentAccess.new document['flow']
-        effort.data            = HashWithIndifferentAccess.new document['data']
-        effort.history         = document['history'].map { |x| HashWithIndifferentAccess.new x }
-        effort.completed_steps = document['completed_steps']
-        effort.complete        = document['complete']
-        effort.completed_at    = document['completed_at']
-        effort
+        Effort.new( {
+                      id:              document['id'],
+                      created_at:      Time.parse(document['created_at'].to_s),
+                      next_execute_at: document['next_execute_at'],
+                      next_step:       document['next_step'],
+                      flow:            HashWithIndifferentAccess.new(document['flow']),
+                      data:            HashWithIndifferentAccess.new(document['data']),
+                      history:         document['history'].map { |x| HashWithIndifferentAccess.new x },
+                      completed_steps: document['completed_steps'],
+                      complete:        document['complete'],
+                      completed_at:    document['completed_at']
+                    } )
       end
 
     end
