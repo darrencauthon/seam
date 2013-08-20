@@ -38,10 +38,17 @@ module Seam
 
     end
     
-    def initialize
+    def initialize(args = {})
       @completed_steps = []
       @history         = []
       @complete        = false
+      args.each { |k, v| self.send "#{k}=".to_sym, v }
+    end
+
+    def self.create args
+      effort = Seam::Effort.new args
+      effort.save
+      effort
     end
 
     def save
