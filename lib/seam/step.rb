@@ -10,8 +10,8 @@ module Seam
 
     def to_hash
       {
-        name: name,
-        type: type,
+        name:      name,
+        type:      type,
         arguments: HashWithIndifferentAccess.new(arguments || {})
       }
     end

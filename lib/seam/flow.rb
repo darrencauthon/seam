@@ -25,9 +25,7 @@ module Seam
     end
 
     def to_hash
-      {
-        steps: self.steps.map { |x| x.to_hash }
-      }
+      { steps: self.steps.map { |x| x.to_hash } }
     end
 
     def steps
