@@ -2,12 +2,12 @@ module Seam
   class Flow
 
     def initialize
-      @steps = []
+      @steps = {}
     end
 
     def method_missing(meth, *args, &blk)
-      return false if @steps.select { |x| x[0] == meth.to_s }.count > 0
-      @steps << [meth.to_s, args]
+      return false if @steps[meth.to_s]
+      @steps[meth.to_s] = args
       true
     end
 
@@ -30,13 +30,13 @@ module Seam
     end
 
     def steps
-      @steps.map do |x|
+      @steps.each.map do |key, value|
         step = Seam::Step.new
-        step.name = x[0]
+        step.name = key
         step.type = "do"
-        step.arguments = x[1]
+        step.arguments = value
         if step.name.index('branch_on')
-          step.name += "_#{x[1][0]}"
+          step.name += "_#{value[0]}"
           step.type = "branch"
         end
         step
