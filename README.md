@@ -51,7 +51,7 @@ _(By default, Seam persists all data in memory, but there are other plugins avai
 So we have an instance of this flow, and the next step to complete for it is "send_order_to_warehouse".  Let's create a worker for this step.
 
 ````
-class SendOrderToWarehouse < Seam::Worker
+class SendOrderToWarehouseWorker < Seam::Worker
   def process
     # Insert code to send the email. 
     # The original data used to create the effort can be accessed by "effort.data"
