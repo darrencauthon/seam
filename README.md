@@ -33,7 +33,7 @@ An instance of this effort was created and saved. This effort will start at the 
 
 _(By default, Seam persists all data in memory, but there are other plugins available for other databases.)_
 
-This method returns the effort that was created, and it will look like this:
+"start" also returns the effort that was created, and it will look like this:
 
 ````
 <Seam::Effort 
