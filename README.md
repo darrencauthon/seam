@@ -4,24 +4,32 @@ Simple workflows in Ruby.
 
 ## Usage
 
-Seam is meant for situations where you want to take some entity (user, order, ec.) through a long-running process.
-This gem provides some basic tools to define the process, break it up into separate components and workers, and then send entities through it.
+Seam is meant for situations where you want to take some entity (user, order, ec.) through a long-running process that is comprised of multiple steps.
+
+For example, if you want every new user a "hello" email after signup, then wait a few days, and then send a "gone so soon?" email if they haven't signed in again.
+
+This gem provides some simple tools for building and executing this process.
+It provides a way to define the process, break it up into separate components, and then send entities through the process.
 
 ####Define a workflow####
 
-To start, define a workflow.  This is called a "flow" in this gem.
+To start, define a workflow.
 
 ````
 flow = Seam::Flow.new
 flow.send_order_to_warehouse
-flow.wait_for_order_to_be_shipped
-flow.send_shipping_email
+flow.wait_for_order_to_be_shipped wait_up_to: 7.days
+flow.send_shipping_email email_template: 'shipping_7'
 flow.mark_order_as_fulfilled
 ````
 
 A flow will convert any method call you make into a step that has to be completed. 
 
-Now that the process has been defined, you can create instances of it by starting the flow:
+You can also pass a hash to the method, which will be saved for later.
+
+````
+flow.wait_for_order_to_be_shipped wait_up_to: 7.days
+````
 
 ####Starting an instance of the flow####
 
@@ -30,9 +38,10 @@ Starting an instance of the flow is done with "start":
 ````
 flow.start order_id: '1234'
 ````
-An instance of this effort was created and saved in the database. This effort will start at the first step (send_order_to_warehouse) and then progress through the steps as they are completed.
 
-_(By default, Seam persists all data in memory, but there are other plugins available for other databases.)_
+An instance of this effort was created and saved in whatever persistence is being used (in-memory by default). 
+
+This effort will start at the first step (send_order_to_warehouse) and then progress through the steps as they are completed.
 
 "start" also returns the effort that was created, and it will look like this:
 
@@ -49,17 +58,26 @@ _(By default, Seam persists all data in memory, but there are other plugins avai
   @data={"order_id"=>"1234"}>
 ````
 
-So we have a unique instance of this flow, and the next step to complete for it is "send_order_to_warehouse".  Let's create a worker for this step.
+So we have a unique instance of this flow and the instance has been saved in the database.  The first step to be executed for this instance is "send_order_to_warehouse", so let's create a worker for this step.
 
 ####Defining workers for each step####
 
-We have a set of steps that have to be executed, but we still need workers for each step. Let's start with the first one:
+A workflow is comprised of steps, and each step needs a worker.  Each worker will execute whatever it was meant to do, and then either:
+
+1. Pass the workflow instance to the next step on the process, or
+2. Delay the step execution for a later date, or
+3. End the entire workflow process for the instance.
+
+Since send_order_to_warehouse is the first step in this workflow, let's build the worker for it first:
 
 ````
 class SendOrderToWarehouseWorker < Seam::Worker
   def process
-    # Insert code to send the email. 
-    # The original data used to create the effort can be accessed by "effort.data"
+    # the current workflow instance is available as "effort"
+    order = Order.find effort.data['order_id']
+    warehouse_service.send order
+
+    # by default, if this worker completes with no error the workflow instance will be sent to the next step
   end
 end
 ````
@@ -72,7 +90,7 @@ To execute the worker, use:
 SendOrderToWarehouse.execute_all
 ````
 
-All efforts sitting on this step will be passed through the worker.
+This method will look for all workflow instances that are currently ready for the step in question.
 
 ####Progressing through the workflow####
 
@@ -91,7 +109,28 @@ end
 
 "try_again_in" can be used to signal that the step has not been completed and should be retried later.
 
-"eject" can also be used to signify that the entire workflow should be stopped.
+"eject" can also be used to signify that the entire workflow should be stopped, like so:
+
+````
+class WaitForOrderToBeShippedWorker < Seam::Worker
+  def process
+    effort.data["shipping_status"] = # some method that returns the shipping status
+    if effort.data["shipping_status"] == "cancelled"
+      eject # no need to continue!
+    end
+  end
+end
+````
+
+####History####
+
+As workflow instances progress through each step, the history of every operation will be stored.  A history of the "data" block before and after each step run is also stored.
+
+The history is available through:
+
+````
+effort.history
+````
 
 ## Installation
 
