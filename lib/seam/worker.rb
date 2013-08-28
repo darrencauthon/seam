@@ -70,7 +70,7 @@ module Seam
     end
 
     def current_step
-      effort.flow["steps"][0]
+      effort.flow["steps"][effort.completed_steps.count]
     end
 
     private

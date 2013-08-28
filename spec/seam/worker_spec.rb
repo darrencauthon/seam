@@ -642,7 +642,7 @@ describe "worker" do
   end
 
   describe "making the current step available" do
-    it "should work" do
+    it "should return the first step if on the first step" do
       flow = Seam::Flow.new
       flow.apple("test")
       flow.orange
@@ -661,6 +661,36 @@ describe "worker" do
       end
 
       apple_worker.execute effort
+    end
+
+    it "should return the second step if on the second step" do
+      flow = Seam::Flow.new
+      flow.apple("test")
+      flow.orange("another test")
+
+      effort = flow.start( { first_name: 'John' } )
+      effort = Seam::Effort.find(effort.id)
+
+      effort.next_step.must_equal "apple"
+
+      apple_worker = Seam::Worker.new
+      apple_worker.handles(:apple)
+      def apple_worker.process
+        current_step.nil?.must_equal false
+        current_step["name"].must_equal "apple"
+        current_step["arguments"].must_equal ["test"]
+      end
+
+      orange_worker = Seam::Worker.new
+      orange_worker.handles(:orange)
+      def orange_worker.process
+        current_step.nil?.must_equal false
+        current_step["name"].must_equal "orange"
+        current_step["arguments"].must_equal ["another test"]
+      end
+
+      apple_worker.execute_all
+      orange_worker.execute_all
     end
   end
 end
