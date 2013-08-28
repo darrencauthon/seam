@@ -64,6 +64,11 @@ module Seam
       @current_run
     end
 
+    def step
+      s = @step || self.class.name.underscore.gsub('_worker', '')
+      s.to_s
+    end
+
     private
 
     def mark_effort_as_complete
@@ -93,11 +98,6 @@ module Seam
 
     def efforts_to_execute
       Seam::Effort.find_all_by_step step
-    end
-
-    def step
-      s = @step || self.class.name.underscore.gsub('_worker', '')
-      s.to_s
     end
 
     def execute_the_appropriate_operation

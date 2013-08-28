@@ -10,6 +10,14 @@ describe "worker" do
     Timecop.return
   end
 
+  describe "step" do
+    it "should match the name" do
+      worker = Seam::Worker.new
+      worker.handles(:darren)
+      worker.step.must_equal "darren"
+    end
+  end
+
   describe "move_to_next_step" do
     it "should work" do
       flow = Seam::Flow.new
