@@ -12,8 +12,20 @@ module Seam
       {
         name:      name,
         type:      type,
-        arguments: HashWithIndifferentAccess.new(arguments || {})
+        arguments: get_arguments
       }
+    end
+
+    private
+
+    def get_arguments
+      arguments.map do |x|
+        if x.is_a? Hash
+          HashWithIndifferentAccess.new(x)
+        else
+          x
+        end
+      end
     end
   end
 end
