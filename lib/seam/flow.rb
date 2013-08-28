@@ -2,13 +2,12 @@ module Seam
   class Flow
 
     def initialize
-      @steps = {}
+      @steps = []
     end
 
     def method_missing(meth, *args, &blk)
       meth = meth.to_s
-      return false if @steps[meth]
-      @steps[meth] = args
+      @steps << [meth, args]
       true
     end
 
@@ -28,7 +27,9 @@ module Seam
     end
 
     def steps
-      @steps.each.map do |name, arguments|
+      @steps.each.map do |values|
+        name      = values[0]
+        arguments = values[1]
         Seam::Step.new( { name:       name,
                           type:      'do',
                           arguments: arguments } )

@@ -109,8 +109,8 @@ describe "flow" do
         flow = Seam::Flow.new
         flow.do_something.must_equal true
         flow.steps.count.must_equal 1
-        flow.do_something.must_equal false
-        flow.steps.count.must_equal 1
+        flow.do_something.must_equal true
+        flow.steps.count.must_equal 2
       end
     end
   end
