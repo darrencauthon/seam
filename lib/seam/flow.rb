@@ -7,7 +7,7 @@ module Seam
 
     def method_missing(meth, *args, &blk)
       meth = meth.to_s
-      @steps << [meth, args]
+      @steps << { name: meth, arguments: args }
       true
     end
 
@@ -27,12 +27,10 @@ module Seam
     end
 
     def steps
-      @steps.each.map do |values|
-        name      = values[0]
-        arguments = values[1]
-        Seam::Step.new( { name:       name,
+      @steps.each.map do |step|
+        Seam::Step.new( { name:      step[:name],
                           type:      'do',
-                          arguments: arguments } )
+                          arguments: step[:arguments] } )
 
       end
     end
