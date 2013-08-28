@@ -69,6 +69,10 @@ module Seam
       s.to_s
     end
 
+    def current_step
+      effort.flow["steps"][0]
+    end
+
     private
 
     def mark_effort_as_complete

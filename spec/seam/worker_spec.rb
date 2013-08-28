@@ -640,6 +640,29 @@ describe "worker" do
     end
 
   end
+
+  describe "making the current step available" do
+    it "should work" do
+      flow = Seam::Flow.new
+      flow.apple("test")
+      flow.orange
+
+      effort = flow.start( { first_name: 'John' } )
+      effort = Seam::Effort.find(effort.id)
+
+      effort.next_step.must_equal "apple"
+
+      apple_worker = Seam::Worker.new
+      apple_worker.handles(:apple)
+      def apple_worker.process
+        current_step.nil?.must_equal false
+        current_step["name"].must_equal "apple"
+        current_step["arguments"].must_equal ["test"]
+      end
+
+      apple_worker.execute effort
+    end
+  end
 end
 
 class IWillNotCallHandlesWorker < Seam::Worker
