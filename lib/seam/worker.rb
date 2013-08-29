@@ -28,6 +28,11 @@ module Seam
       operation_args[:seconds] = seconds
     end
 
+    def try_again_on time
+      @operation_to_execute = :try_again_on
+      operation_args[:time] = time
+    end
+
     attr_accessor :operation_args
     def operation_args
       @operation_args ||= {}
@@ -42,6 +47,10 @@ module Seam
                                 history[:try_again_on] = try_again_on
 
                                 effort.next_execute_at = try_again_on
+                              end,
+        try_again_on:      -> do
+                                history[:try_again_on] = operation_args[:time]
+                                effort.next_execute_at = operation_args[:time]
                               end,
         move_to_next_step: -> do
                                 effort.completed_steps << effort.next_step

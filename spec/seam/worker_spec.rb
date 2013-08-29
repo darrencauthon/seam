@@ -94,9 +94,51 @@ describe "worker" do
       fresh_effort.next_step.must_equal "apple"
     end
 
-    it "should not update the next execute date" do
+    it "should update the next execute date" do
       fresh_effort = Seam::Effort.find(effort.id)
       fresh_effort.next_execute_at.must_equal Time.parse('4/4/2013')
+    end
+  end
+
+  describe "try_again_on" do
+
+    describe "putting it off for one day" do
+      let(:effort) do
+        flow = Seam::Flow.new
+        flow.apple
+        flow.orange
+
+        e = flow.start( { first_name: 'John' } )
+        Seam::Effort.find(e.id)
+      end
+
+      before do
+        Timecop.freeze Time.parse('3/4/2013')
+        effort.next_step.must_equal "apple"
+
+        apple_worker = Seam::Worker.new
+        apple_worker.handles(:apple)
+        def apple_worker.process
+          try_again_on Time.parse('4/4/2013')
+        end
+
+        apple_worker.execute effort
+      end
+
+      it "should not update the next step" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.next_step.must_equal "apple"
+      end
+
+      it "should update the next execute date" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.next_execute_at.must_equal Time.parse('4/4/2013')
+      end
+
+      it "should update the history" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.history[0]['try_again_on'].must_equal Time.parse('4/4/2013')
+      end
     end
   end
 
