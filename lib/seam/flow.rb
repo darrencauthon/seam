@@ -1,8 +1,11 @@
 module Seam
   class Flow
 
+    attr_accessor :stamp_data_history
+
     def initialize
       @steps = []
+      @stamp_data_history = false
     end
 
     def method_missing(meth, *args, &blk)
