@@ -4,6 +4,7 @@ describe "worker" do
 
   before do
     Seam::Persistence.destroy
+    @stamp_data_history = true
   end
 
   after do
@@ -260,6 +261,7 @@ describe "worker" do
     let(:effort_creator) do
       ->() do
         e = flow.start
+        flow.stamp_data_history = @stamp_data_history
         Seam::Effort.find(e.id)
       end
     end
@@ -550,8 +552,8 @@ describe "worker" do
                                           "started_at"=> Time.now, 
                                           "step"=>"wait_for_attempting_contact_stage",
                                           "stopped_at" => Time.now, 
-                                          "data_before" => nil ,
-                                          "data_after"  => nil 
+                                          "data_before" => { "first_name" => "DARREN" } ,
+                                          "data_after"  => { "first_name" => "DARREN", "hit 1" => 1 } 
                                         } )
 
       send_postcard_if_necessary_worker.execute_all
