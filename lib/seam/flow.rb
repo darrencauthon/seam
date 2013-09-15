@@ -26,7 +26,10 @@ module Seam
     end
 
     def to_hash
-      { steps: self.steps.map { |x| x.to_hash } }
+      { 
+        steps: self.steps.map { |x| x.to_hash },
+        stamp_data_history: @stamp_data_history
+      }
     end
 
     def steps
