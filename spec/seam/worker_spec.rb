@@ -550,8 +550,8 @@ describe "worker" do
                                           "started_at"=> Time.now, 
                                           "step"=>"wait_for_attempting_contact_stage",
                                           "stopped_at" => Time.now, 
-                                          "data_before" => { "first_name" => "DARREN" } ,
-                                          "data_after"  => { "first_name" => "DARREN", "hit 1" => 1 } 
+                                          "data_before" => nil ,
+                                          "data_after"  => nil 
                                         } )
 
       send_postcard_if_necessary_worker.execute_all

@@ -98,7 +98,7 @@ module Seam
       run = { 
               started_at:  Time.now,
               step:        step, 
-              data_before: effort.data.clone
+              #data_before: effort.data.clone
             }
       @current_run = HashWithIndifferentAccess.new run
     end
@@ -120,7 +120,7 @@ module Seam
 
     def stamp_the_new_history_record
       history[:result]     = @operation_to_execute
-      history[:data_after] = effort.data.clone
+      #history[:data_after] = effort.data.clone
       history[:stopped_at] = Time.now
 
       effort.history << history
