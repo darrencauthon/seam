@@ -120,8 +120,11 @@ module Seam
 
     def stamp_the_new_history_record
       history[:result]     = @operation_to_execute
-      history[:data_after] = effort.data.clone if stamping_the_history?
       history[:stopped_at] = Time.now
+
+      if stamping_the_history?
+        history[:data_after] = effort.data.clone
+      end
 
       effort.history << history
     end
