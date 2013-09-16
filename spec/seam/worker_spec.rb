@@ -4,6 +4,7 @@ describe "worker" do
 
   before do
     Seam::Persistence.destroy
+    @stamp_data_history = true
   end
 
   after do
@@ -260,6 +261,7 @@ describe "worker" do
     let(:effort_creator) do
       ->() do
         e = flow.start
+        flow.stamp_data_history = @stamp_data_history
         Seam::Effort.find(e.id)
       end
     end
@@ -550,8 +552,6 @@ describe "worker" do
                                           "started_at"=> Time.now, 
                                           "step"=>"wait_for_attempting_contact_stage",
                                           "stopped_at" => Time.now, 
-                                          "data_before" => { "first_name" => "DARREN" } ,
-                                          "data_after"  => { "first_name" => "DARREN", "hit 1" => 1 } 
                                         } )
 
       send_postcard_if_necessary_worker.execute_all
@@ -733,6 +733,85 @@ describe "worker" do
 
       apple_worker.execute_all
       orange_worker.execute_all
+    end
+  end
+
+  describe "data history" do
+    describe "stamping the history" do
+      let(:effort) do
+        flow = Seam::Flow.new
+        flow.stamp_data_history = true
+        flow.apple
+
+        e = flow.start( { first_name: 'John' } )
+        Seam::Effort.find(e.id)
+      end
+
+      before do
+        Timecop.freeze Time.parse('3/4/2013')
+        effort.next_step.must_equal "apple"
+
+        apple_worker = Seam::Worker.new
+        apple_worker.handles(:apple)
+        def apple_worker.process
+          effort.data['something'] = 'else'
+        end
+
+        apple_worker.execute effort
+      end
+
+      it "should not update the next step" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.history.count.must_equal 1
+      end
+
+      it "should set the data_before history" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.history.first["data_before"].must_equal( { "first_name" => 'John' } )
+      end
+
+      it "should set the data_after history" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.history.first["data_after"].must_equal( { "first_name" => 'John', "something" => 'else' } )
+      end
+    end
+
+    describe "not stamping the history" do
+      let(:effort) do
+        flow = Seam::Flow.new
+        flow.stamp_data_history = false
+        flow.apple
+
+        e = flow.start( { first_name: 'John' } )
+        Seam::Effort.find(e.id)
+      end
+
+      before do
+        Timecop.freeze Time.parse('3/4/2013')
+
+        apple_worker = Seam::Worker.new
+        apple_worker.handles(:apple)
+        def apple_worker.process
+          effort.data['something'] = 'else'
+        end
+
+        apple_worker.execute effort
+      end
+
+      it "should not update the next step" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.history.count.must_equal 1
+      end
+
+      it "should set the data_before history" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.history.first["data_before"].nil?.must_equal true
+      end
+
+      it "should set the data_after history" do
+        fresh_effort = Seam::Effort.find(effort.id)
+        fresh_effort.history.first["data_after"].nil?.must_equal true
+      end
     end
   end
 end

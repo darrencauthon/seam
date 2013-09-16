@@ -1,8 +1,11 @@
 module Seam
   class Flow
 
+    attr_accessor :stamp_data_history
+
     def initialize
       @steps = []
+      @stamp_data_history = false
     end
 
     def method_missing(meth, *args, &blk)
@@ -23,7 +26,10 @@ module Seam
     end
 
     def to_hash
-      { steps: self.steps.map { |x| x.to_hash } }
+      { 
+        steps: self.steps.map { |x| x.to_hash },
+        stamp_data_history: @stamp_data_history
+      }
     end
 
     def steps

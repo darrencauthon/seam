@@ -98,7 +98,7 @@ module Seam
       run = { 
               started_at:  Time.now,
               step:        step, 
-              data_before: effort.data.clone
+              data_before: stamping_the_history? ? effort.data.clone : nil
             }
       @current_run = HashWithIndifferentAccess.new run
     end
@@ -120,10 +120,17 @@ module Seam
 
     def stamp_the_new_history_record
       history[:result]     = @operation_to_execute
-      history[:data_after] = effort.data.clone
       history[:stopped_at] = Time.now
 
+      if stamping_the_history?
+        history[:data_after] = effort.data.clone
+      end
+
       effort.history << history
+    end
+
+    def stamping_the_history?
+      effort.flow['stamp_data_history']
     end
 
     def save_the_effort

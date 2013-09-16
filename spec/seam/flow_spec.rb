@@ -129,4 +129,36 @@ describe "flow" do
       end
     end
   end
+
+  describe "stamping history" do
+    describe "default" do
+      it "should should be false" do
+        flow = Seam::Flow.new
+        flow.stamp_data_history.must_equal false
+      end
+    end
+
+    describe "setting it to true" do
+      it "allow to be set to true" do
+        flow = Seam::Flow.new
+        flow.stamp_data_history = true
+        flow.stamp_data_history.must_equal true
+      end
+    end
+
+    describe "carrying the value through the serialization" do
+
+      it "should be able to persist false" do
+        flow = Seam::Flow.new
+        flow.stamp_data_history = false
+        flow.to_hash[:stamp_data_history].must_equal false
+      end
+
+      it "should be able to persist true" do
+        flow = Seam::Flow.new
+        flow.stamp_data_history = true
+        flow.to_hash[:stamp_data_history].must_equal true
+      end
+    end
+  end
 end
