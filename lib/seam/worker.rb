@@ -19,8 +19,9 @@ module Seam
       @operation_to_execute = :eject
     end
 
-    def move_to_next_step
+    def move_to_next_step(options = {})
       @operation_to_execute = :move_to_next_step
+      operation_args[:next_execute_at] = (options[:on] || Time.now)
     end
 
     def try_again_in seconds
@@ -53,6 +54,8 @@ module Seam
                                 effort.next_execute_at = operation_args[:time]
                               end,
         move_to_next_step: -> do
+                                effort.next_execute_at = operation_args[:next_execute_at] if operation_args[:next_execute_at]
+
                                 effort.completed_steps << effort.next_step
 
                                 steps = effort.flow['steps'].map { |x| x['name'] }
@@ -60,6 +63,7 @@ module Seam
 
                                 effort.next_step = next_step
                                 mark_effort_as_complete if next_step.nil?
+
                               end,
         eject:             -> { mark_effort_as_complete }
       }

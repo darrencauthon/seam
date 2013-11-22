@@ -53,6 +53,48 @@ describe "worker" do
           effort.next_step.must_equal "orange"
           effort.next_execute_at.must_equal Time.parse(test.date)
         end
+
+      end
+
+    end
+
+    [:date, :next_date].to_objects {[
+      ['1/1/2011', '2/1/2011'],
+      ['1/1/2011', '2/2/2011'],
+      ['3/4/2015', '4/5/2016']
+    ]}.each do |test|
+
+      describe "move to some point in the future" do
+
+        before { Timecop.freeze Time.parse(test.date) }
+        after  { Timecop.return }
+
+        it "should move to the next step and set the date to now" do
+          flow = Seam::Flow.new
+          flow.apple
+          flow.orange
+
+          effort = flow.start( { first_name: 'John' } )
+          effort = Seam::Effort.find(effort.id)
+
+          effort.next_step.must_equal "apple"
+
+          apple_worker = Seam::Worker.new
+          apple_worker.handles(:apple)
+          eval("
+          def apple_worker.process
+            move_to_next_step( { on: Time.parse('#{test.next_date}') } )
+          end
+          ")
+
+
+          apple_worker.execute effort
+
+          effort = Seam::Effort.find(effort.id)
+          effort.next_step.must_equal "orange"
+          effort.next_execute_at.must_equal Time.parse(test.next_date)
+        end
+
       end
 
     end
