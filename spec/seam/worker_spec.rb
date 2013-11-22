@@ -20,26 +20,28 @@ describe "worker" do
   end
 
   describe "move_to_next_step" do
-    it "should work" do
-      flow = Seam::Flow.new
-      flow.apple
-      flow.orange
+    describe "move immediately" do
+      it "should move to the next step and set the date to now" do
+        flow = Seam::Flow.new
+        flow.apple
+        flow.orange
 
-      effort = flow.start( { first_name: 'John' } )
-      effort = Seam::Effort.find(effort.id)
+        effort = flow.start( { first_name: 'John' } )
+        effort = Seam::Effort.find(effort.id)
 
-      effort.next_step.must_equal "apple"
+        effort.next_step.must_equal "apple"
 
-      apple_worker = Seam::Worker.new
-      apple_worker.handles(:apple)
-      def apple_worker.process
-        move_to_next_step
+        apple_worker = Seam::Worker.new
+        apple_worker.handles(:apple)
+        def apple_worker.process
+          move_to_next_step
+        end
+
+        apple_worker.execute effort
+
+        effort = Seam::Effort.find(effort.id)
+        effort.next_step.must_equal "orange"
       end
-
-      apple_worker.execute effort
-
-      effort = Seam::Effort.find(effort.id)
-      effort.next_step.must_equal "orange"
     end
   end
 
