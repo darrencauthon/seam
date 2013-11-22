@@ -87,7 +87,6 @@ describe "worker" do
           end
           ")
 
-
           apple_worker.execute effort
 
           effort = Seam::Effort.find(effort.id)
