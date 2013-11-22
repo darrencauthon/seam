@@ -6,7 +6,7 @@ module Seam
 
     def process
       if effort.history.count == 0
-        try_again_in 3.days
+        try_again_in current_step[:arguments][0]
       end
     end
   end
