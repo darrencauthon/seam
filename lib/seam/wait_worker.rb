@@ -22,7 +22,7 @@ module Seam
 
     def time_of_last_execution
       return effort.created_at if effort.history.count == 0
-      effort.history.first[:stopped_at]
+      effort.history.last[:stopped_at]
     end
 
   end
