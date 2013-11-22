@@ -85,7 +85,7 @@ describe Seam::WaitWorker do
         Seam::WaitWorker.new.execute_all
         Seam::Effort.find(effort_id).next_step.must_equal "do_something"
       end
-      j
+       
       it "should set the next execute date" do
         Seam::WaitWorker.new.execute_all
         Seam::Effort.find(effort_id).next_execute_at.must_equal expected_start
