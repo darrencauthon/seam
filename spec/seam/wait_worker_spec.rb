@@ -15,16 +15,16 @@ describe Seam::WaitWorker do
     Seam::WaitWorker.new.step.must_equal 'wait'
   end
 
+  let(:today) do
+    Time.parse '1/1/2011'
+  end
+
+  let(:effort_id) do
+    effort = flow.start
+    effort.id
+  end
+
   describe "using it in a flow" do
-
-    let(:effort_id) do
-      effort = flow.start
-      effort.id
-    end
-
-    let(:today) do
-      Time.parse '1/1/2011'
-    end
 
     [:length_of_time].to_objects { [
       [3.days],
