@@ -13,7 +13,7 @@ module Seam
     private
 
     def the_time_to_move_on
-      Time.now + the_amount_of_time_to_wait
+      effort.created_at + the_amount_of_time_to_wait
     end
 
     def the_amount_of_time_to_wait

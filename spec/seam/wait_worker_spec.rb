@@ -59,6 +59,39 @@ describe Seam::WaitWorker do
       end
 
     end
+
+    describe "time has passed since the flow was started and the wait worker was called" do
+
+      let(:today)                              { Time.parse('1/1/2011') }
+      let(:time_to_wait)                       { 3.days }
+      let(:time_before_wait_worker_was_called) { 1.day }
+      let(:expected_start)                     { today + time_to_wait }
+
+      let(:flow) do
+        f = Seam::Flow.new
+        f.wait time_to_wait
+        f.do_something
+        f
+      end
+
+      before do
+        Timecop.freeze today
+        effort_id
+
+        Timecop.freeze today + time_before_wait_worker_was_called
+      end
+
+      it "should move to the next step" do
+        Seam::WaitWorker.new.execute_all
+        Seam::Effort.find(effort_id).next_step.must_equal "do_something"
+      end
+      j
+      it "should set the next execute date" do
+        Seam::WaitWorker.new.execute_all
+        Seam::Effort.find(effort_id).next_execute_at.must_equal expected_start
+      end
+
+    end
     
   end
 
