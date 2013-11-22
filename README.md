@@ -132,6 +132,17 @@ The history is available through:
 effort.history
 ````
 
+####Waiting####
+
+Seam comes with a default worker for waiting. It can be defined by calling "wait" on a flow, like this.
+
+````
+flow = Seam::Flow.new
+flow.send_order_to_warehouse
+flow.wait 2.days
+flow.check_if_the_order_has_been_fulfilled
+````
+
 ## Installation
 
 Add this line to your application's Gemfile:
