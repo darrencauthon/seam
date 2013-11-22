@@ -84,6 +84,7 @@ describe Seam::WaitWorker do
         end
 
         it "should continue on after the days have passed" do
+          DoSomething.new.execute_all
           Seam::WaitWorker.new.execute_all
 
           Timecop.freeze(today + test.length_of_time)
@@ -93,6 +94,7 @@ describe Seam::WaitWorker do
         end
 
       end
+
     end
   end
 end
