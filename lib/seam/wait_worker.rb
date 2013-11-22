@@ -1,26 +1,25 @@
 module Seam
+
   class WaitWorker < ::Seam::Worker
+
     def initialize
       handles :wait
     end
 
     def process
-      try_again_in the_appropriate_amount_of_time if we_should_wait
+      move_to_next_step( { on: the_time_to_move_on } )
     end
 
     private
 
-    def we_should_wait
-      first = effort.history.count == 0 || 
-              effort.history.last[:step] != 'wait'
-      if (effort.created_at + the_appropriate_amount_of_time) <= Time.now
-        return false
-      end
-      first
+    def the_time_to_move_on
+      Time.now + the_amount_of_time_to_wait
     end
 
-    def the_appropriate_amount_of_time
+    def the_amount_of_time_to_wait
       current_step[:arguments][0]
     end
+
   end
+
 end
