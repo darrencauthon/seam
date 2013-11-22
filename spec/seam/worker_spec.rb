@@ -20,28 +20,41 @@ describe "worker" do
   end
 
   describe "move_to_next_step" do
-    describe "move immediately" do
-      it "should move to the next step and set the date to now" do
-        flow = Seam::Flow.new
-        flow.apple
-        flow.orange
 
-        effort = flow.start( { first_name: 'John' } )
-        effort = Seam::Effort.find(effort.id)
+    [:date].to_objects {[
+      ['1/1/2011'],
+      ['3/4/2015']
+    ]}.each do |test|
+      
+      describe "move immediately" do
 
-        effort.next_step.must_equal "apple"
+        before { Timecop.freeze Time.parse(test.date) }
+        after  { Timecop.return }
 
-        apple_worker = Seam::Worker.new
-        apple_worker.handles(:apple)
-        def apple_worker.process
-          move_to_next_step
+        it "should move to the next step and set the date to now" do
+          flow = Seam::Flow.new
+          flow.apple
+          flow.orange
+
+          effort = flow.start( { first_name: 'John' } )
+          effort = Seam::Effort.find(effort.id)
+
+          effort.next_step.must_equal "apple"
+
+          apple_worker = Seam::Worker.new
+          apple_worker.handles(:apple)
+          def apple_worker.process
+            move_to_next_step
+          end
+
+          apple_worker.execute effort
+
+          effort = Seam::Effort.find(effort.id)
+          effort.next_step.must_equal "orange"
+          effort.next_execute_at.must_equal Time.parse(test.date)
         end
-
-        apple_worker.execute effort
-
-        effort = Seam::Effort.find(effort.id)
-        effort.next_step.must_equal "orange"
       end
+
     end
   end
 
