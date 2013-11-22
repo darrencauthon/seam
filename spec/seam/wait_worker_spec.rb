@@ -95,6 +95,52 @@ describe Seam::WaitWorker do
 
       end
 
+      describe "just enough time has passed to ignore the wait" do
+
+        let(:flow) do
+          f = Seam::Flow.new
+          f.wait test.length_of_time
+          f.do_something
+          f
+        end
+
+        before do
+          Timecop.freeze today
+          effort_id
+        end
+
+        it "should continue on" do
+          Timecop.freeze(today + test.length_of_time)
+
+          Seam::WaitWorker.new.execute_all
+          Seam::Effort.find(effort_id).next_step.must_equal "do_something"
+        end
+
+      end
+
+      describe "more than enough time has passed to ignore the wait" do
+
+        let(:flow) do
+          f = Seam::Flow.new
+          f.wait test.length_of_time
+          f.do_something
+          f
+        end
+
+        before do
+          Timecop.freeze today
+          effort_id
+        end
+
+        it "should continue on" do
+          Timecop.freeze(today + test.length_of_time + 1)
+
+          Seam::WaitWorker.new.execute_all
+          Seam::Effort.find(effort_id).next_step.must_equal "do_something"
+        end
+
+      end
+
     end
   end
 end

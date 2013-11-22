@@ -11,7 +11,12 @@ module Seam
     private
 
     def we_should_wait
-      effort.history.count == 0 || effort.history.last[:step] != 'wait'
+      first = effort.history.count == 0 || 
+              effort.history.last[:step] != 'wait'
+      if (effort.created_at + the_appropriate_amount_of_time) <= Time.now
+        return false
+      end
+      first
     end
 
     def the_appropriate_amount_of_time
