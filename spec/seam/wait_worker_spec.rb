@@ -1,5 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
+class DoSomething < Seam::Worker
+  def process
+  end
+end
+
 describe Seam::WaitWorker do
 
   it "should be a worker" do
@@ -42,6 +47,38 @@ describe Seam::WaitWorker do
         end
 
         it "should immediately wait" do
+          Seam::WaitWorker.new.execute_all
+          Seam::Effort.find(effort_id).next_step.must_equal "wait"
+        end
+
+        it "should continue on after the days have passed" do
+          Seam::WaitWorker.new.execute_all
+
+          Timecop.freeze(today + test.length_of_time)
+
+          Seam::WaitWorker.new.execute_all
+          Seam::Effort.find(effort_id).next_step.must_equal "do_something"
+        end
+
+      end
+      
+      describe "a slightly more complex situation" do
+
+        let(:flow) do
+          f = Seam::Flow.new
+          f.do_something
+          f.wait test.length_of_time
+          f.do_something
+          f
+        end
+
+        before do
+          Timecop.freeze today
+          effort_id
+        end
+
+        it "should immediately wait" do
+          DoSomething.new.execute_all
           Seam::WaitWorker.new.execute_all
           Seam::Effort.find(effort_id).next_step.must_equal "wait"
         end
