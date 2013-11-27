@@ -102,6 +102,7 @@ module Seam
       run = { 
               started_at:  Time.now,
               step:        step, 
+              step_id:     current_step['id'],
               data_before: stamping_the_history? ? effort.data.clone : nil
             }
       @current_run = HashWithIndifferentAccess.new run

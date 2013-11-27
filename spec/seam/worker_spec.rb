@@ -605,6 +605,7 @@ describe "worker" do
 
       effort.history.count.must_equal 1
       effort.history[0].contrast_with!( {
+                                          "step_id" => effort.flow['steps'][0]['id'],
                                           "started_at"=> Time.now, 
                                           "step"=>"wait_for_attempting_contact_stage",
                                           "stopped_at" => Time.now, 
@@ -622,6 +623,7 @@ describe "worker" do
 
       effort.history.count.must_equal 1
       effort.history[0].contrast_with!( {
+                                          "step_id" => effort.flow['steps'][0]['id'],
                                           "started_at"=> Time.now,
                                           "step"=>"wait_for_attempting_contact_stage",
                                           "stopped_at" => Time.now,
@@ -641,6 +643,7 @@ describe "worker" do
 
       effort.history.count.must_equal 2
       effort.history[1].contrast_with!( {
+                                          "step_id" => effort.flow['steps'][0]['id'],
                                           "started_at"=> Time.now, 
                                           "step"=>"wait_for_attempting_contact_stage",
                                           "stopped_at" => Time.now,
@@ -659,6 +662,7 @@ describe "worker" do
 
       effort.history.count.must_equal 3
       effort.history[2].contrast_with!( { 
+                                          "step_id" => effort.flow['steps'][0]['id'],
                                           "started_at"=> Time.now,
                                           "step"=>"wait_for_attempting_contact_stage",
                                           "stopped_at" => Time.now,
@@ -674,6 +678,7 @@ describe "worker" do
 
       effort.history.count.must_equal 4
       effort.history[3].contrast_with!( { 
+                                          "step_id" => effort.flow['steps'][1]['id'],
                                           "started_at"=> Time.now,
                                           "step"=>"determine_if_postcard_should_be_sent",
                                           "stopped_at" => Time.now,
@@ -689,6 +694,7 @@ describe "worker" do
 
       effort.history.count.must_equal 5
       effort.history[4].contrast_with!( {
+                                          "step_id" => effort.flow['steps'][2]['id'],
                                           "started_at"=> Time.now,
                                           "step"=>"send_postcard_if_necessary",
                                           "stopped_at" => Time.now,
