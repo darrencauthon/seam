@@ -20,9 +20,18 @@ module Seam
                              created_at:      Time.parse(Time.now.to_s),
                              next_execute_at: Time.parse(Time.now.to_s),
                              next_step:       self.steps.first.name.to_s,
-                             flow:            ActiveSupport::HashWithIndifferentAccess.new(self.to_hash),
+                             flow:            the_flow_from,
                              data:            ActiveSupport::HashWithIndifferentAccess.new(data)
                            } )
+    end
+
+    def the_flow_from
+      hash = self.to_hash
+      flow = ActiveSupport::HashWithIndifferentAccess.new hash
+      flow['steps'].each do |step|
+        step['id'] = SecureRandom.uuid.to_s
+      end
+      flow
     end
 
     def to_hash

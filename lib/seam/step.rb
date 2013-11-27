@@ -1,5 +1,6 @@
 module Seam
   class Step
+    attr_accessor :id
     attr_accessor :name
     attr_accessor :type
     attr_accessor :arguments
@@ -10,6 +11,7 @@ module Seam
 
     def to_hash
       {
+        id:        id,
         name:      name,
         type:      type,
         arguments: get_arguments

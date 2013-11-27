@@ -63,7 +63,9 @@ describe "flow" do
         Timecop.freeze now
 
         @expected_uuid = SecureRandom.uuid.to_s
-        SecureRandom.expects(:uuid).returns @expected_uuid
+        SecureRandom.stubs(:uuid).returns(@expected_uuid)
+                                 .then.returns(1)
+                                 .then.returns(2)
 
         @effort = flow.start( { first_name: 'John' } )
       end
@@ -92,6 +94,13 @@ describe "flow" do
         effort = Seam::Effort.find @effort.id
         effort.to_hash.contrast_with! @effort.to_hash, [:id, :created_at]
       end
+
+      it "should set unique identifiers on the flow ids" do
+        effort = Seam::Effort.find @effort.id
+        effort.flow['steps'][0]['id'].must_equal '1'
+        effort.flow['steps'][1]['id'].must_equal '2'
+      end
+
     end
   end
 
