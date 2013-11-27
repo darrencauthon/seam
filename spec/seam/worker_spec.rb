@@ -621,7 +621,13 @@ describe "worker" do
       effort.next_step.must_equal "wait_for_attempting_contact_stage"
 
       effort.history.count.must_equal 1
-      effort.history[0].contrast_with!({"started_at"=> Time.now, "step"=>"wait_for_attempting_contact_stage", "stopped_at" => Time.now, "result" => "try_again_in", "try_again_on" => Time.now + 1.day } )
+      effort.history[0].contrast_with!( {
+                                          "started_at"=> Time.now,
+                                          "step"=>"wait_for_attempting_contact_stage",
+                                          "stopped_at" => Time.now,
+                                          "result" => "try_again_in",
+                                          "try_again_on" => Time.now + 1.day 
+                                        } )
 
       # THE NEXT DAY
       Timecop.freeze Time.parse('27/12/2013')
@@ -634,7 +640,12 @@ describe "worker" do
       effort.next_step.must_equal "wait_for_attempting_contact_stage"
 
       effort.history.count.must_equal 2
-      effort.history[1].contrast_with!({"started_at"=> Time.now, "step"=>"wait_for_attempting_contact_stage", "stopped_at" => Time.now, "result" => "try_again_in" } )
+      effort.history[1].contrast_with!( {
+                                          "started_at"=> Time.now, 
+                                          "step"=>"wait_for_attempting_contact_stage",
+                                          "stopped_at" => Time.now,
+                                          "result" => "try_again_in" 
+                                        } )
 
       # THE NEXT DAY
       Timecop.freeze Time.parse('28/12/2013')
@@ -647,7 +658,12 @@ describe "worker" do
       effort.next_step.must_equal "determine_if_postcard_should_be_sent"
 
       effort.history.count.must_equal 3
-      effort.history[2].contrast_with!({"started_at"=> Time.now, "step"=>"wait_for_attempting_contact_stage", "stopped_at" => Time.now, "result" => "move_to_next_step" } )
+      effort.history[2].contrast_with!( { 
+                                          "started_at"=> Time.now,
+                                          "step"=>"wait_for_attempting_contact_stage",
+                                          "stopped_at" => Time.now,
+                                          "result" => "move_to_next_step" 
+                                        } )
 
       # KEEP GOING
       send_postcard_if_necessary_worker.execute_all
@@ -657,7 +673,12 @@ describe "worker" do
       effort.next_step.must_equal "send_postcard_if_necessary"
 
       effort.history.count.must_equal 4
-      effort.history[3].contrast_with!({"started_at"=> Time.now, "step"=>"determine_if_postcard_should_be_sent", "stopped_at" => Time.now, "result" => "move_to_next_step" } )
+      effort.history[3].contrast_with!( { 
+                                          "started_at"=> Time.now,
+                                          "step"=>"determine_if_postcard_should_be_sent",
+                                          "stopped_at" => Time.now,
+                                          "result" => "move_to_next_step" 
+                                        } )
       
       # KEEP GOING
       send_postcard_if_necessary_worker.execute_all
@@ -667,7 +688,12 @@ describe "worker" do
       effort.next_step.must_equal nil
 
       effort.history.count.must_equal 5
-      effort.history[4].contrast_with!({"started_at"=> Time.now, "step"=>"send_postcard_if_necessary", "stopped_at" => Time.now, "result" => "move_to_next_step" } )
+      effort.history[4].contrast_with!( {
+                                          "started_at"=> Time.now,
+                                          "step"=>"send_postcard_if_necessary",
+                                          "stopped_at" => Time.now,
+                                          "result" => "move_to_next_step" 
+                                        } )
     end
   end
 
