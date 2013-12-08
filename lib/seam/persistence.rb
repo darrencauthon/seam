@@ -12,7 +12,7 @@ module Seam
         .map { |x| x.clone }
     end
 
-    def self.find_something_to_do step
+    def self.find_something_to_do
       Seam::InMemory.records
         .select { |x| x.next_execute_at <= Time.now }
         .map    { |x| x.clone }
