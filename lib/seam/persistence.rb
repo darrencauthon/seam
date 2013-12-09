@@ -14,7 +14,9 @@ module Seam
 
     def self.find_something_to_do
       Seam::InMemory.records
+        .select { |x| x.complete.nil? || x.complete == false }
         .select { |x| x.next_execute_at <= Time.now }
+        .select { |x| x.next_step != nil }
         .map    { |x| x.clone }
     end
 
