@@ -1,5 +1,7 @@
 module Seam
+
   class Worker
+
     def handles step
       @step = step
     end
@@ -141,5 +143,7 @@ module Seam
     def save_the_effort
       effort.save
     end
+
   end
+
 end
