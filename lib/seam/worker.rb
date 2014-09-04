@@ -13,12 +13,21 @@ module Seam
       after_process
     end
 
+    def self.inherited handler
+      @handlers ||= []
+      @handlers << handler
+    end
+
     def self.handler_for step
       @handlers.each do |handler|
         instance = handler.new
         return instance if instance.handles == step
       end
       nil
+    end
+
+    def self.all
+      (@handlers || []).map { |x| x.new }
     end
 
     def execute_all

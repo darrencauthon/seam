@@ -19,6 +19,26 @@ describe "worker" do
     end
   end
 
+  describe "inherited & all" do
+
+    before do
+      Seam::Worker.instance_eval { @handlers = nil }
+    end
+
+    it "should default to an empty set" do
+      Seam::Worker.all.count.must_equal 0
+    end
+
+    it "should return new instances of all handlers" do
+      instance = Object.new
+      klass = Struct.new(:new).new instance
+      Seam::Worker.inherited klass
+      Seam::Worker.all.count.must_equal 1
+      Seam::Worker.all[0].must_be_same_as instance
+    end
+
+  end
+
   describe "handler for" do
 
     let(:handler_1) { Struct.new(:handles).new SecureRandom.uuid }
