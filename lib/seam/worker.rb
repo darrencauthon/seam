@@ -21,7 +21,7 @@ module Seam
     def self.handler_for step
       @handlers.each do |handler|
         instance = handler.new
-        return instance if instance.handles == step
+        return instance if instance.step == step
       end
       nil
     end

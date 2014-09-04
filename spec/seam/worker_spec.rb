@@ -41,9 +41,9 @@ describe "worker" do
 
   describe "handler for" do
 
-    let(:handler_1) { Struct.new(:handles).new SecureRandom.uuid }
-    let(:handler_2) { Struct.new(:handles).new SecureRandom.uuid }
-    let(:handler_3) { Struct.new(:handles).new SecureRandom.uuid }
+    let(:handler_1) { Struct.new(:step).new SecureRandom.uuid }
+    let(:handler_2) { Struct.new(:step).new SecureRandom.uuid }
+    let(:handler_3) { Struct.new(:step).new SecureRandom.uuid }
 
     before do
       handler_1_class, handler_2_class, handler_3_class = Object.new, Object.new, Object.new
@@ -58,9 +58,9 @@ describe "worker" do
     end
 
     it "should return the handler for the type" do
-      Seam::Worker.handler_for(handler_2.handles).must_be_same_as handler_2
-      Seam::Worker.handler_for(handler_1.handles).must_be_same_as handler_1
-      Seam::Worker.handler_for(handler_3.handles).must_be_same_as handler_3
+      Seam::Worker.handler_for(handler_2.step).must_be_same_as handler_2
+      Seam::Worker.handler_for(handler_1.step).must_be_same_as handler_1
+      Seam::Worker.handler_for(handler_3.step).must_be_same_as handler_3
     end
 
     it "should return nil if none exist" do
