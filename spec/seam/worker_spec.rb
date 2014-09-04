@@ -19,6 +19,35 @@ describe "worker" do
     end
   end
 
+  describe "handler for" do
+
+    let(:handler_1) { Struct.new(:handles).new SecureRandom.uuid }
+    let(:handler_2) { Struct.new(:handles).new SecureRandom.uuid }
+    let(:handler_3) { Struct.new(:handles).new SecureRandom.uuid }
+
+    before do
+      handler_1_class, handler_2_class, handler_3_class = Object.new, Object.new, Object.new
+
+      handler_1_class = Struct.new(:new).new handler_1
+      handler_2_class = Struct.new(:new).new handler_2
+      handler_3_class = Struct.new(:new).new handler_3
+
+      Seam::Worker.instance_eval do
+        @handlers = [handler_1_class, handler_2_class, handler_3_class]
+      end
+    end
+
+    it "should return the handler for the type" do
+      Seam::Worker.handler_for(handler_2.handles).must_be_same_as handler_2
+      Seam::Worker.handler_for(handler_1.handles).must_be_same_as handler_1
+      Seam::Worker.handler_for(handler_3.handles).must_be_same_as handler_3
+    end
+
+    it "should return nil if none exist" do
+      Seam::Worker.handler_for('test').nil?.must_equal true
+    end
+  end
+
   describe "move_to_next_step" do
 
     [:date].to_objects {[

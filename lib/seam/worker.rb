@@ -13,6 +13,14 @@ module Seam
       after_process
     end
 
+    def self.handler_for step
+      @handlers.each do |handler|
+        instance = handler.new
+        return instance if instance.handles == step
+      end
+      nil
+    end
+
     def execute_all
       efforts_to_execute.each { |e| execute e }
     end
