@@ -17,6 +17,11 @@ describe "worker" do
       worker.handles(:darren)
       worker.step.must_equal "darren"
     end
+
+    it "should drop namespaces" do
+      worker = ThisIsANamespace::ThisIsAnotherNamespace::IAmAWorker.new
+      worker.step.must_equal "i_am_a"
+    end
   end
 
   describe "inherited & all" do
@@ -957,3 +962,12 @@ class IWillNotCallHandlesWorker < Seam::Worker
   # no calling handles here
   def process; end
 end
+
+module ThisIsANamespace
+  module ThisIsAnotherNamespace
+    class IAmAWorker < Seam::Worker
+      def process; end
+    end
+  end
+end
+

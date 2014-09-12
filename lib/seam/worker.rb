@@ -97,7 +97,7 @@ module Seam
     end
 
     def step
-      s = @step || self.class.name.underscore.gsub('_worker', '')
+      s = @step || self.class.name.underscore.gsub('_worker', '').split('/')[-1]
       s.to_s
     end
 
